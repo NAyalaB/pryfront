@@ -1,6 +1,8 @@
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 export const loginUser = async (email: string, password: string) => {
     try {
-        const response = await fetch('http://localhost:3001/auth/signin', {
+        const response = await fetch(`${apiUrl}/auth/signin`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

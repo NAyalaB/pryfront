@@ -1,5 +1,6 @@
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
 export async function sendCreateUserEmail(email: string, name: string) {
-    const response = await fetch('http://localhost:3001/email/CreateUserEmail', {
+    const response = await fetch(`${apiUrl}/email/CreateUserEmail`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

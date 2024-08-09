@@ -1,8 +1,10 @@
 import { IRegisterProps } from "../types/IRegisterProps";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 export async function register(userData: IRegisterProps) {
     try {
-        const res = await fetch (`http://localhost:3001/auth/signup`,{
+        const res = await fetch (`${apiUrl}/auth/signup`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json'
             },
