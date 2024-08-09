@@ -7,6 +7,9 @@ import LoadingPage from '../../LoadingPage/loading';
 import { IEvent } from '@/src/types/IEvent';
 import { IBooking } from '@/src/types/IBooking';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
+
 interface IEventWithBookings extends IEvent {
     bookings: IBooking[];
 }
@@ -28,16 +31,16 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const eventsResponse = await fetch('http://localhost:3001/events/eventsWithBookingsAndUsers');
+                const eventsResponse = await fetch(`${apiUrl}/events/eventsWithBookingsAndUsers`);
                 const eventsData: IEventWithBookings[] = await eventsResponse.json();
 
-                const bookingsResponse = await fetch(`http://localhost:3001/booking/byUser/${userId}`);
+                const bookingsResponse = await fetch(`${apiUrl}/booking/byUser/${userId}`);
                 const bookingsData: IBooking[] = await bookingsResponse.json();
 
                 const eventsMap = new Map<number, IEvent>(eventsData.map(event => [event.id, event]));
 
                 const bookingsWithTitles = await Promise.all(bookingsData.map(async (booking) => {
-                    const eventResponse = await fetch(`http://localhost:3001/events/${booking.eventsId}`);
+                    const eventResponse = await fetch(`${apiUrl}/events/${booking.eventsId}`);
                     const eventData = await eventResponse.json();
 
                     return {

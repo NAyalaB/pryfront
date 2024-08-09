@@ -8,6 +8,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 const Navbar: React.FC = () => {
     const menuRef = useRef<HTMLInputElement>(null);
     const { token, setToken, setUser, user } = useAuth();
@@ -29,7 +31,7 @@ const Navbar: React.FC = () => {
             setToken(null);
             setUser(null);
 
-            window.location.href = 'http://localhost:3001/auth/logout'
+            window.location.href = `${apiUrl}/auth/logout`
         } catch (error) {
             console.error('Error during logout:', error);
         }

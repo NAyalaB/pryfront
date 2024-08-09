@@ -5,6 +5,8 @@ import { useAuth } from "../../AuthContext";
 import { IUser } from "@/src/types/IUser";
 import Swal from "sweetalert2";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 interface DashboardUserProps {
     userId: number;
 }
@@ -56,7 +58,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
         };
 
         try {
-            const response = await fetch(`http://localhost:3001/users/${user.id}`, {
+            const response = await fetch(`${apiUrl}/users/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

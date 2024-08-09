@@ -62,8 +62,7 @@ export const EventForm: React.FC = () => {
 
 
   
-    // Puedes actualizar la validación aquí si es necesario
-    // Por ejemplo:
+  
     if (!selectedFile) {
       setErrorDataEvent((prevErrors) => ({
         ...prevErrors,

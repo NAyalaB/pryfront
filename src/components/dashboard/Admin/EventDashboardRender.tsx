@@ -12,12 +12,16 @@ import { useAuth } from "../../AuthContext"
 import Swal from "sweetalert2"
 //Types
 import { Booking } from "./IBookings"
+import { log } from "console"
+import { uploadFile } from "@/src/helpers/uploadFile"
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
 
 
 const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, location, maxseats, description, subtitle, totalPersons,totalBookings }) => {
   const { handleEventDelete, setEvents, } = useCrud();
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState<IEvent>({
+  const [formDataEvent, setFormDataEvent] = useState<IEvent>({
     id,
     title,
     subtitle: subtitle || "",
@@ -33,35 +37,66 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
   const { user } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (formData) {
-      setFormData({
-        ...formData,
+    if (formDataEvent) {
+      setFormDataEvent({
+        ...formDataEvent,
         [name]: value
       })
-    }
+    };
+  }
+    const handleFileModification = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFile = event.target.files?.[0] || null;
+      console.log(event, "eventtttt");
+      console.log(event.target.files, "fileeeeeesss");
+      
+      
+      setFile(selectedFile);
+  
+    /*   if (event.target) {
+        event.target.value = '';
+      } */
+    
+        };
 
-  };
+
+
 
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!formData) return;
+    if (!formDataEvent) return;
+  
+
+
+      let pictureUrl = formDataEvent.picture;
+
+  if (file) {
     try {
-      const response = await fetch(`http://localhost:3001/events/${id}`,
+      pictureUrl = await uploadFile(file);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return;
+    }
+  }
+        
+    try {
+      const response = await fetch(`${apiUrl}/events/${id}`,
         {
           method: "PUT",
           headers: { 'Content-Type': 'application/json', },
           body: JSON.stringify({
-            title: formData.title,
-            subtitle: formData.subtitle,
-            description: formData.description,
-            date: String(formData.date),
-            location: formData.location,
-            maxseats: Number(formData.maxseats),
-            price: Number(formData.price),
-            picture: formData.picture
+            title: formDataEvent.title,
+            subtitle: formDataEvent.subtitle,
+            description: formDataEvent.description,
+            date: String(formDataEvent.date),
+            location: formDataEvent.location,
+            maxseats: Number(formDataEvent.maxseats),
+            price: Number(formDataEvent.price),
+            picture: pictureUrl,
           })
         }
       )
@@ -97,7 +132,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
 
   const handleFetchUsers = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/events/eventsWithBookingsAndUsers?id=${id}`);
+      const response = await fetch(`${apiUrl}/events/eventsWithBookingsAndUsers?id=${id}`);
       if (response.ok) {
         const eventData = await response.json();
         const event = eventData.find((e: any) => e.id === id);
@@ -218,7 +253,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="title"
-                  value={formData.title}
+                  value={formDataEvent.title}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -229,7 +264,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="subtitle"
-                  value={formData.subtitle}
+                  value={formDataEvent.subtitle}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -240,7 +275,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="description"
-                  value={formData.description}
+                  value={formDataEvent.description}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -251,7 +286,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="date"
-                  value={formData.date}
+                  value={formDataEvent.date}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -262,7 +297,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="location"
-                  value={formData.location}
+                  value={formDataEvent.location}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -274,7 +309,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="number"
                   name="maxseats"
-                  value={formData.maxseats}
+                  value={formDataEvent.maxseats}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -285,7 +320,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="number"
                   name="price"
-                  value={formData.price}
+                  value={formDataEvent.price}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
@@ -294,10 +329,10 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
               <div className="mb-2">
                 <label className="block ">Picture:</label>
                 <input
-                  type="text"
+                  type="file"
                   name="picture"
-                  value={formData.picture}
-                  onChange={handleChange}
+                
+                  onChange={handleFileModification}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
               </div>
