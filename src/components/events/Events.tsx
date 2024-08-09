@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useCrud } from "../CrudContext";
 import LoadingPage from "../LoadingPage/loading";
 
+
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const { events, loading } = useCrud();
@@ -29,7 +30,7 @@ const Events: React.FC = () => {
   const formatEventDate = (date: string) => {
     return new Date(date).toLocaleString();
   };
-  console.log(events, "imagennnn");
+ 
 
 
 
@@ -58,6 +59,7 @@ const Events: React.FC = () => {
               <Image
                 src={event.picture}
                 alt="Event Image"
+                layout="responsive"
                 width={500}
                 height={500}
                 className="rounded-lg"
@@ -109,21 +111,31 @@ const Events: React.FC = () => {
                 height={300}
                 className="rounded-lg mb-4"
               />
-              <p className="text-gray-700 mb-2">{selectedEvent.description}</p>
+              <p className=" text-gray-700 text-base leading-relaxed mt-4 whitespace-pre-line">{selectedEvent.description}</p>
               <p className="text-gray-700 mb-2">
                 <span className="font-bold text-black">Date:</span>{" "}
                 {formatEventDate(selectedEvent.date)}
               </p>
-              <p className="text-gray-700 mb-2">
+           
+
+              <p className="text-gray-700 mb-2 flex items-center">
                 <span className="font-bold text-black">Location:</span>{" "}
+              
                 <a
                   href={selectedEvent.location}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="ml-2"
                 >
-                  {selectedEvent.location}
+                  <Image 
+               src={"/assets/googleMaps.png"}
+               alt="Google Maps"
+               width={30}
+               height={30}
+               />
                 </a>
               </p>
+              
 
               <p className="text-gray-700 mb-2">
                 <span className="font-bold text-black">MaxSeats:</span>{" "}
