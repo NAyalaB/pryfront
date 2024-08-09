@@ -4,11 +4,17 @@ import { useState } from "react";
 import Image from "next/image";
 import { useCrud } from "../CrudContext";
 import LoadingPage from "../LoadingPage/loading";
+import { loadStripe } from "@stripe/stripe-js";
+import { useAuth } from "../AuthContext";
+import Swal from "sweetalert2";
+
+const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
 
 
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const { events, loading } = useCrud();
+  const { user } = useAuth();
 
   const handleImageClick = (event: IEvent) => {
     const seatsRemain = event.maxseats - (event.totalPersons || 0);
@@ -30,8 +36,50 @@ const Events: React.FC = () => {
   const formatEventDate = (date: string) => {
     return new Date(date).toLocaleString();
   };
- 
 
+
+  const handleCheckout = async (event: IEvent) => {
+    console.log("handleCheckout called", event);
+    const stripe = await stripePromise;
+    if (!user) {
+      Swal.fire({
+        icon: 'error',
+        text: 'You need to be logged in to add products to the cart.'
+      });
+      return;
+    }
+    if (!stripe) {
+      console.error("Stripe.js no se ha cargado.");
+      return;
+    }
+    try {
+      // Solicita la creación de una sesión de pago
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventId: event.id,
+          title: event.title,
+          price: event.price,
+          description: event.description
+          // Puedes enviar el ID del evento o cualquier otra información que necesites
+        }),
+      });
+
+      const { sessionId } = await response.json();
+
+      // Redirige al usuario al checkout de Stripe
+      const { error } = await stripe.redirectToCheckout({ sessionId });
+
+      if (error) {
+        console.error("Error al redirigir a Stripe Checkout", error);
+      }
+    } catch (error) {
+      console.error("Error al crear la sesión de pago", error);
+    }
+  };
 
 
 
@@ -82,7 +130,7 @@ const Events: React.FC = () => {
                 >
                   Event Details
                 </button>
-                
+
               </div>
             </div>
           </div>
@@ -116,26 +164,26 @@ const Events: React.FC = () => {
                 <span className="font-bold text-black">Date:</span>{" "}
                 {formatEventDate(selectedEvent.date)}
               </p>
-           
+
 
               <p className="text-gray-700 mb-2 flex items-center">
                 <span className="font-bold text-black">Location:</span>{" "}
-              
+
                 <a
                   href={selectedEvent.location}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="ml-2"
                 >
-                  <Image 
-               src={"/assets/googleMaps.png"}
-               alt="Google Maps"
-               width={30}
-               height={30}
-               />
+                  <Image
+                    src={"/assets/googleMaps.png"}
+                    alt="Google Maps"
+                    width={30}
+                    height={30}
+                  />
                 </a>
               </p>
-              
+
 
               <p className="text-gray-700 mb-2">
                 <span className="font-bold text-black">MaxSeats:</span>{" "}
@@ -149,7 +197,9 @@ const Events: React.FC = () => {
                 <span className="font-bold text-black">SeatsRemain:</span>
                 {selectedEvent.seatsRemain}
               </p>
-              <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full">
+              <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
+              onClick={() => handleCheckout(selectedEvent)}
+              >
                 BookNow
               </button>
             </div>
