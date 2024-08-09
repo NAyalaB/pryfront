@@ -20,7 +20,7 @@ interface DashboardProps {
 }
 
 const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
-    const [selectedOption, setSelectedOption] = useState<'Profile' | 'Payment' | 'Events'>('Profile');
+    const [selectedOption, setSelectedOption] = useState<'Profile' | 'Events'>('Profile');
     const [userEvents, setUserEvents] = useState<IEventWithBookings[]>([]);
     const [userBookings, setUserBookings] = useState<IBookingWithTitle[]>([]);
     const { user } = useAuth();
