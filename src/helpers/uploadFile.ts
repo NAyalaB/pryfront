@@ -1,11 +1,13 @@
  // src/helpers/fileUtils.ts
 
+ const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
  export const uploadFile = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
   
     try {
-      const response = await fetch('http://localhost:3001/uploadImage', {
+      const response = await fetch(`${apiUrl}/uploadImage`, {
         method: 'POST',
         body: formData,
       });

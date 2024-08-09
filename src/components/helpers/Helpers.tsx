@@ -1,9 +1,10 @@
 import { IUser } from "@/src/types/IUser";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
 
 export const fetchUserById = async (id: string, token: string): Promise<IUser> => {
     console.log(`Fetching user with ID: ${id}`);
     
-    const response = await fetch(`http://localhost:3001/users/${id}`, {
+    const response = await fetch(`${apiUrl}/users/${id}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

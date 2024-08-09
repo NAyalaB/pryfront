@@ -11,6 +11,8 @@ import { IBooking } from "../types/IBooking";
 import fetchEvents from "./events/helpers";
 import { useAuth } from "./AuthContext";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 
 interface CrudContextProps {
   setEvents: Dispatch<SetStateAction<IEvent[]>>;
@@ -46,7 +48,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3001/events/${id}`, {
+        const response = await fetch(`${apiUrl}/events/${id}`, {
           method: "DELETE",
         });
 
@@ -77,7 +79,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:3001/users/${id}`, {
+        const response = await fetch(`${apiUrl}/users/${id}`, {
           method: "DELETE",
         });
 
@@ -117,7 +119,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchAllBookings = async () => {
       try {
-        const response = await fetch("http://localhost:3001/booking")
+        const response = await fetch(`${apiUrl}/booking`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -139,7 +141,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3001/users")
+        const response = await fetch(`${apiUrl}/users`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);

@@ -1,5 +1,7 @@
 import { IEventProps } from "../types/IEventProps";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+
 export async function createEvent(eventData: IEventProps) {
 
     const keepData = {
@@ -10,7 +12,7 @@ export async function createEvent(eventData: IEventProps) {
     }
     try {
         console.log(keepData);
-        const res = await fetch (`http://localhost:3001/events`,{
+        const res = await fetch (`${apiUrl}/events`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json'
             },
