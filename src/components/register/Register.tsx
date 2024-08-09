@@ -7,6 +7,7 @@ import { IRegisterProps } from "@/src/types/IRegisterProps";
 import { IRegisterErrorProps } from "@/src/types/IRegisterErrorProps";
 import { validateFormRegister } from "@/src/helpers/formValidation";
 import { register } from "../../helpers/authRegister";
+import { sendCreateUserEmail } from "@/src/helpers/sendEmail";
 import Link from "next/link";
 import Swal from "sweetalert2";
 
@@ -90,6 +91,7 @@ const Register: React.FC = () => {
     if (Object.values(errors).every((error) => error === "")) {
       try {
         await register(dataToSend);
+        await sendCreateUserEmail(dataToSend.email, dataToSend.name);
         Swal.fire({
           title: "Register Successful",
           text: "You have successfully register!",
