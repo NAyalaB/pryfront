@@ -329,6 +329,16 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
               <div className="mb-2">
                 <label className="block ">Picture:</label>
                 <input
+                  type="text"
+                  name="picture"
+                  value={formDataEvent.picture}
+                  className="w-full px-2 py-1 rounded text-black border"
+                />
+              </div>
+
+              <div className="mb-2">
+                <label className="block ">Picture:</label>
+                <input
                   type="file"
                   name="picture"
                 

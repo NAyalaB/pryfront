@@ -61,7 +61,16 @@ const CalendarComp: React.FC<CalendarCompProps> = ({ events }) => {
             <h2 className="text-xl font-bold text-white">{selectedEvent.title}</h2>
             {selectedEvent.subtitle && <h3 className="text-lg text-gray-300">{selectedEvent.subtitle}</h3>}
             <p className="mt-2 text-white">Date: {new Date(selectedEvent.date).toLocaleString()}</p>
-            <p className="mt-2 text-white">Location: {selectedEvent.location || 'N/A'}</p>
+            <p className="mt-2 text-white">Location: 
+              <a href={selectedEvent.location || 'N/A'}>
+              <Image
+                    src={"/assets/googleMaps.png"}
+                    alt="Google Maps"
+                    width={30}
+                    height={30}
+                    />
+              </a>
+              </p>
             <p className="mt-2 text-white">Price: ${selectedEvent.price.toFixed(2)}</p>
             <p className="mt-2 text-white">Max Seats: {selectedEvent.maxseats}</p>
             <Image src={selectedEvent.picture} alt="Event picture" width={200} height={200} />
