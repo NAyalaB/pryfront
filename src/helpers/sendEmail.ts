@@ -8,7 +8,7 @@ export async function sendCreateUserEmail(email: string, name: string) {
       body: JSON.stringify({
         to: email,
         text: 'Gracias por registrarte',
-        urlHome: 'http://localhost:3000/home',
+        urlHome: `https://pryfront.vercel.app/home`,
         name: name,
       }),
     });
