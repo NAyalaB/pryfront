@@ -148,7 +148,7 @@ const LoginFormClient: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => window.location.href = `${apiUrl}/auth/auth0/callback`}
+              onClick={() => window.location.href = `${apiUrl}/auth/auth0/callback?prompt=select_account`}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
               Conectarse con Google
