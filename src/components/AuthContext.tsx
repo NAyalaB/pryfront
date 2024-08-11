@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useState, useEffect, useContext, ReactNode, Dispatch, SetStateAction } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import Cookies from 'js-cookie';
 import { IUser } from '../types/IUser';
 import { fetchUserById } from './helpers/Helpers';
@@ -109,7 +109,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUser(mappedUser);
             const fetchUserProfile = async () => {
                 try {
-                    const response = await fetch('http://localhost:3000/auth/me', {
+                    const response = await fetch(`http://localhost:3000/auth/me`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                     });
@@ -168,6 +168,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         Cookies.remove("appSession", { path: '/' });
         setToken(null);
         setUser(null);
+
+        window.location.href = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(window.location.origin)}`;
     };
 
     return (
