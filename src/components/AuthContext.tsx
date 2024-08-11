@@ -168,6 +168,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         Cookies.remove("appSession", { path: '/' });
         setToken(null);
         setUser(null);
+
+        window.location.href = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(window.location.origin)}`;
     };
 
     return (
