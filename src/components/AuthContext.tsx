@@ -6,6 +6,8 @@ import { IUser } from '../types/IUser';
 import { fetchUserById } from './helpers/Helpers';
 import { useUser as useAuth0User, UserProfile } from '@auth0/nextjs-auth0/client';
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 interface DecodedToken {
     id: string;
     email: string;
@@ -169,7 +171,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setToken(null);
         setUser(null);
 
-        window.location.href = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(window.location.origin)}`;
+        window.location.href = `${apiUrl}/auth/logout`;
     };
 
     return (
