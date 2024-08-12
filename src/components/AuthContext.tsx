@@ -6,6 +6,7 @@ import { IUser } from '../types/IUser';
 import { fetchUserById } from './helpers/Helpers';
 import { useUser as useAuth0User, UserProfile } from '@auth0/nextjs-auth0/client';
 
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 interface DecodedToken {
@@ -168,6 +169,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.removeItem("userToken");
         localStorage.removeItem("userData");
         Cookies.remove("appSession", { path: '/' });
+        console.log('appSession cookie after removal:', Cookies.get("appSession"));
         setToken(null);
         setUser(null);
 
