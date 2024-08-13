@@ -1,11 +1,17 @@
 "use client";
+//Types
+import { IBooking } from "@/src/types/IBooking";
 import { IEvent } from "@/src/types/IEvent";
-import { useState } from "react";
+//Vendors
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useCrud } from "../CrudContext";
-import LoadingPage from "../LoadingPage/loading";
 import { loadStripe } from "@stripe/stripe-js";
+//Contexts
+import { useCrud } from "../CrudContext";
 import { useAuth } from "../AuthContext";
+//Components
+import LoadingPage from "../LoadingPage/loading";
+//BookStores
 import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
@@ -13,7 +19,7 @@ const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [quantity, setQuantity] = useState(1); 
-  const { events, loading } = useCrud();
+  const { events, loading, book, fetchBookingByEventId } = useCrud();
   const { user } = useAuth();
 
   const handleImageClick = (event: IEvent) => {
@@ -46,6 +52,14 @@ const Events: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (selectedEvent && user) {
+    fetchBookingByEventId(user.id,selectedEvent.id);
+
+    }
+  }, [selectedEvent, user, fetchBookingByEventId])
+
+
   if (loading) {
     return <LoadingPage />;
   }
@@ -68,17 +82,29 @@ const Events: React.FC = () => {
       return;
     }
     try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
+      // Solicita la creación de una sesión de pago
+      const bookingDetails: IBooking = {
+        ...book,
+        TransactionNumber: book.TransactionNumber,
+        Quantity: book.Quantity,
+        Paid: book.Paid,
+        Date: book.Date,
+        userId:book.userId,
+        eventsId:book.eventsId
+      }
+
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           eventId: event.id,
           title: event.title,
-          price: event.price * quantity, 
+          price: event.price,
           description: event.description,
-          quantity,
+          bookingDetails
+          // Puedes enviar el ID del evento o cualquier otra información que necesites
         }),
       });
 
@@ -237,23 +263,7 @@ const Events: React.FC = () => {
                 <span className="font-bold text-black">Seats Remain:</span>{" "}
                 {selectedEvent.seatsRemain}
               </p>
-              <div className="flex items-center mt-4">
-                <button
-                  className="bg-gray-200 rounded-l px-4 py-2 text-black"
-                  onClick={() => handlePersonChange(false)}
-                >
-                  -
-                </button>
-                <div className="bg-white px-4 py-2 text-black">{quantity}</div>
-                <button
-                  className="bg-gray-200 rounded-r px-4 py-2 text-black"
-                  onClick={() => handlePersonChange(true)}
-                >
-                  +
-                </button>
-              </div>
-              <button
-                className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4"
+              <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
                 onClick={() => handleCheckout(selectedEvent)}
               >
                 Add Experience

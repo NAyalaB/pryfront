@@ -1,6 +1,8 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
+
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
@@ -8,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-        const { title, price, description} = req.body;
+        const { title, price, description, bookingDetails} = req.body;
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -27,6 +29,9 @@ export default async function handler(req, res) {
         mode: 'payment',
         success_url: 'http://localhost:3000/home',
         cancel_url: 'http://localhost:3000/experience',
+        metadata:{
+          bookingDetails:JSON.stringify(bookingDetails),//guarda los detalles de booking en el metadata
+        }
       });
 
       res.status(200).json({ sessionId: session.id });

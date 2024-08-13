@@ -5,6 +5,9 @@ import { IUser } from '../types/IUser';
 import { fetchUserById } from './helpers/Helpers';
 import { useUser as useAuth0User, UserProfile } from '@auth0/nextjs-auth0/client';
 
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
 interface DecodedToken {
     id: string;
     email: string;
@@ -167,6 +170,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.removeItem("userData");
         setToken(null);
         setUser(null);
+
+        window.location.href = `${apiUrl}/auth/logout`;
     };
 
     return (
