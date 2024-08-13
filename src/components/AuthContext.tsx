@@ -112,7 +112,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUser(mappedUser);
             const fetchUserProfile = async () => {
                 try {
-                    const response = await fetch(`http://localhost:3000/auth/me`, {
+                    const response = await fetch(`api/auth/me`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                     });
