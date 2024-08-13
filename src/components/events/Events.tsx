@@ -15,7 +15,7 @@ import LoadingPage from "../LoadingPage/loading";
 import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
@@ -37,7 +37,7 @@ const Events: React.FC = () => {
 
   useEffect(() => {
     if (selectedEvent && user) {
-    fetchBookingByEventId(user.id,selectedEvent.id);
+      fetchBookingByEventId(user.id, selectedEvent.id);
 
     }
   }, [selectedEvent, user, fetchBookingByEventId])
@@ -74,8 +74,8 @@ const Events: React.FC = () => {
         Quantity: book.Quantity,
         Paid: book.Paid,
         Date: book.Date,
-        userId:book.userId,
-        eventsId:book.eventsId
+        userId: book.userId,
+        eventsId: book.eventsId
       }
 
       const response = await fetch('/api/create-checkout-session', {
@@ -101,6 +101,28 @@ const Events: React.FC = () => {
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }
+
+      if (!error) {
+        await fetch(`${apiUrl}/booking`, {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bookingDetails: {
+              ...book,
+              TransactionNumber: book.TransactionNumber,
+              Quantity: book.Quantity,
+              Paid: book.Paid,
+              Date: book.Date,
+              userId: book.userId,
+              eventsId: book.eventsId
+            }
+          })
+        })
+      }
+
+
     } catch (error) {
       console.error("Error al crear la sesión de pago", error);
     }
