@@ -1,6 +1,6 @@
 export interface IBooking{
     id: number,
-    TransactionNumber:number,
+    TransactionNumber:string,
     Quantity:number,
     Paid:number,
     Date:string,

@@ -1,7 +1,6 @@
 'use client';
 import { createContext, useState, useEffect, useContext, ReactNode, Dispatch, SetStateAction } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import Cookies from 'js-cookie';
 import { IUser } from '../types/IUser';
 import { fetchUserById } from './helpers/Helpers';
 import { useUser as useAuth0User, UserProfile } from '@auth0/nextjs-auth0/client';
@@ -17,14 +16,14 @@ interface AuthContextProps {
     decodedToken: DecodedToken | null;
     user: IUser | null;
     setUser: Dispatch<SetStateAction<IUser | null>>;
-    handleLogout: () => void;  
+    handleLogout: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps | null>(null);
 
 const getToken = (): string | null => {
     if (typeof window !== 'undefined') {
-        return localStorage.getItem("userToken") || Cookies.get("appSession") || null;
+        return localStorage.getItem("userToken") || null;
     }
     return null;
 };
@@ -109,7 +108,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUser(mappedUser);
             const fetchUserProfile = async () => {
                 try {
-                    const response = await fetch('http://localhost:3000/auth/me', {
+                    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL;
+                    const response = await fetch(`${frontendUrl}/api/auth/me`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
                     });
@@ -165,7 +165,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const handleLogout = () => {
         localStorage.removeItem("userToken");
         localStorage.removeItem("userData");
-        Cookies.remove("appSession", { path: '/' });
         setToken(null);
         setUser(null);
     };
