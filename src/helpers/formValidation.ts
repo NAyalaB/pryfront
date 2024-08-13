@@ -7,35 +7,35 @@ export function validateFormRegister (dataUser: IRegisterProps) {
     }
     
     if(!dataUser.email){
-        errors.email = "El email es requerido.";
+        errors.email = "The email is required.";
     } else if (!/^.+@.+\..+$/.test(dataUser.email)){
-        errors.email = "El email no es valido"
+        errors.email = "Invalid email address."
 
     } else if (!dataUser.password){
-        errors.password = "La contraseña es requerida.";
+        errors.password = "Password is required.";
     }else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,15}$/.test(dataUser.password)){
-        errors.password = "La contraseña debe tener entre 8 y 15 caracteres, incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.";
+        errors.password = "The password must be between 8 and 15 characters long, and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
 
     } else if (!dataUser.name){
-        errors.name = "El nombre es requerido.";
+        errors.name = "Name is required.";
 
 
     } else if (!dataUser.address){
-        errors.address = "La dirección es requerida.";
+        errors.address = "Address is required.";
 
     } else if (!dataUser.country){
-        errors.country = "Country es requerida."; 
+        errors.country = "Country is required."; 
          
     } else if (!dataUser.city){
-        errors.city = "City es requerida."; 
+        errors.city = "City is required."; 
 
     } else if (!dataUser.phone){
-        errors.phone = "El numero de telefono es requerido.";
+        errors.phone = "The phone number is required.";
     } else if (!isBirthdayValid(dataUser.birthday)) {
-        errors.birthday = "La fecha de cumpleaños debe ser anterior a la fecha actual.";
+        errors.birthday = "You must be at least 18 years old to register.";
 
     }  else if (dataUser.passwordConfirm !== dataUser.password){
-        errors.passwordConfirm = "Las contraseñas no coinciden.";
+        errors.passwordConfirm = "The passwords do not match.";
     } 
     
         return errors;

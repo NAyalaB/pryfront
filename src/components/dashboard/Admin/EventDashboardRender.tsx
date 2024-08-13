@@ -12,8 +12,11 @@ import { useAuth } from "../../AuthContext"
 import Swal from "sweetalert2"
 //Types
 import { Booking } from "./IBookings"
-import { log } from "console"
 import { uploadFile } from "@/src/helpers/uploadFile"
+import ImageUploader from "@/src/helpers/ImageUploader"
+import formatDate from "../../../helpers/formatDate"
+
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL  
 
@@ -21,6 +24,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL
 const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, location, maxseats, description, subtitle, totalPersons,totalBookings }) => {
   const { handleEventDelete, setEvents, } = useCrud();
   const [editMode, setEditMode] = useState(false);
+  const [address, setAddress] = useState("");
   const [formDataEvent, setFormDataEvent] = useState<IEvent>({
     id,
     title,
@@ -48,31 +52,13 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
       })
     };
   }
-    const handleFileModification = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = event.target.files?.[0] || null;
-      console.log(event, "eventtttt");
-      console.log(event.target.files, "fileeeeeesss");
-      
-      
-      setFile(selectedFile);
-  
-    /*   if (event.target) {
-        event.target.value = '';
-      } */
     
-        };
 
-
-
-
-
-  const handleSubmit = async (event: React.FormEvent) => {
+   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!formDataEvent) return;
   
-
-
-      let pictureUrl = formDataEvent.picture;
+  let pictureUrl = formDataEvent.picture;
 
   if (file) {
     try {
@@ -82,6 +68,13 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
       return;
     }
   }
+  const googleMapsUrl = address
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+  : formDataEvent.location || "";
+
+  console.log("Address Input:", address); // <-- Añadir este console.log
+      console.log("Google Maps URL:", googleMapsUrl); // Verifica la URL generada
+      console.log("Form Data Event Location:", formDataEvent.location); // Antes de la actualización
         
     try {
       const response = await fetch(`${apiUrl}/events/${id}`,
@@ -92,8 +85,8 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
             title: formDataEvent.title,
             subtitle: formDataEvent.subtitle,
             description: formDataEvent.description,
-            date: String(formDataEvent.date),
-            location: formDataEvent.location,
+            date: new Date(formDataEvent.date).toISOString(),
+            location: googleMapsUrl || formDataEvent.location,
             maxseats: Number(formDataEvent.maxseats),
             price: Number(formDataEvent.price),
             picture: pictureUrl,
@@ -286,20 +279,53 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 <input
                   type="text"
                   name="date"
-                  value={formDataEvent.date}
+                  value={formatDate(formDataEvent.date)}
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                 />
               </div>
 
               <div className="mb-2">
-                <label className="block ">Location:</label>
+                <label className="block "
+                 htmlFor="date"
+                >New date:</label>
+                <input
+                  type="datetime-local"
+                  id="date"
+                  name="date"
+                  value={formDataEvent.date}
+                  onChange={handleChange}
+                  className="w-full px-2 py-1 rounded text-black border"
+                  required
+                 pattern="\d{4}-\d{2}-\d{2}"
+              />
+              </div>
+
+              <p className="mt-2 text-white  flex items-center">Location: 
+             {formDataEvent.location ? (
+  <a href={formDataEvent.location} target="_blank" rel="noopener noreferrer">
+    <Image className="ml-2 mb-2 mt-2"
+      src={"/assets/googleMaps.png"}
+      alt="Google Maps"
+      width={30}
+      height={30}
+    />
+  </a>
+) : (
+  <span>No location available</span>
+)}
+              </p>
+
+              <div className="mb-2">
+                <label className="block ">New location:</label>
                 <input
                   type="text"
                   name="location"
-                  value={formDataEvent.location}
-                  onChange={handleChange}
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   className="w-full px-2 py-1 rounded text-black border"
+                  placeholder="Street No., district"
                 />
               </div>
 
@@ -326,50 +352,42 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                 />
               </div>
 
-              <div className="mb-2">
-                <label className="block ">Picture:</label>
-                <input
-                  type="text"
-                  name="picture"
-                  value={formDataEvent.picture}
-                  className="w-full px-2 py-1 rounded text-black border"
-                />
-              </div>
+              <ImageUploader onFileChange={setFile} />
 
-              <div className="mb-2">
-                <label className="block ">Picture:</label>
-                <input
-                  type="file"
-                  name="picture"
-                
-                  onChange={handleFileModification}
-                  className="w-full px-2 py-1 rounded text-black border"
-                />
-              </div>
+              {formDataEvent.picture && (
+                <div className="mb-2">
+                  <label className="block">Current Image:</label>
+                  <div className="relative w-full h-64">
+                    <Image
+                      src={formDataEvent.picture}
+                      alt="Event"
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
+                </div>
+              )}
 
-              <div className="flex justify-end gap-2 mt-4">
-                <button
-                  type="submit"
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-400"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400"
-                  onClick={() => setEditMode(false)}
-                >
-                  Cancel
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-400"
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditMode(false)}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-400 ml-2"
+              >
+                Cancel
+              </button>
             </form>
           </div>
         </div>
       )}
-
     </div>
-  )
-}
+  );
+};
 
 export default DataRender
 
