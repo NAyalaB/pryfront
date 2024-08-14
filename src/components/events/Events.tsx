@@ -104,7 +104,6 @@ const Events: React.FC = () => {
           price: event.price,
           description: event.description,
           bookingDetails
-          // Puedes enviar el ID del evento o cualquier otra información que necesites
         }),
       });
 
@@ -263,6 +262,21 @@ const Events: React.FC = () => {
                 <span className="font-bold text-black">Seats Remain:</span>{" "}
                 {selectedEvent.seatsRemain}
               </p>
+              <div className="flex items-center mt-4">
+                <button
+                  className="bg-gray-200 rounded-l px-4 py-2 text-black"
+                  onClick={() => handlePersonChange(false)}
+                >
+                  -
+                </button>
+                <div className="bg-white px-4 py-2 text-black">{quantity}</div>
+                <button
+                  className="bg-gray-200 rounded-r px-4 py-2 text-black"
+                  onClick={() => handlePersonChange(true)}
+                >
+                  +
+                </button>
+              </div>
               <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
                 onClick={() => handleCheckout(selectedEvent)}
               >

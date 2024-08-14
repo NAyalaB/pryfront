@@ -1,8 +1,6 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
@@ -30,7 +28,7 @@ export default async function handler(req, res) {
         success_url: 'http://localhost:3000/home',
         cancel_url: 'http://localhost:3000/experience',
         metadata:{
-          bookingDetails:JSON.stringify(bookingDetails),//guarda los detalles de booking en el metadata
+          bookingDetails:JSON.stringify(bookingDetails),
         }
       });
 
