@@ -1,24 +1,29 @@
 "use client"
 // app/success/page.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const Success = () => {
     const router = useRouter();
-    const searchParams = new URLSearchParams(window.location.search);
-    const session_id = searchParams.get('session_id');
+    const [sessionId, setSessionId] = useState(null);
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
+    useEffect(() => {
+        // Solo se accede a window.location.search después de que el componente se haya montado
+        const searchParams = new URLSearchParams(window.location.search);
+        const session_id = searchParams.get('session_id');
+        setSessionId(session_id);
+    }, []);
 
-   
+
     useEffect(() => {
         const handlePostPayment = async () => {
-            if (session_id) {
+            if (sessionId) {
                 try {
                     // Obtén la información de la sesión de pago
-                    const response = await fetch(`/api/get-session-info?session_id=${session_id}`);
+                    const response = await fetch(`/api/get-session-info?session_id=${sessionId}`);
                     const sessionData = await response.json();
 
                     const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
@@ -65,7 +70,7 @@ const Success = () => {
         };
 
         handlePostPayment();
-    }, [session_id, router]);
+    }, [sessionId, router]);
 
     return (
         <div className='border-s-2 text-green-700'>
