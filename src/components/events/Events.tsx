@@ -19,6 +19,7 @@ const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [quantity, setQuantity] = useState(1); 
+  const [totalPrice, setTotalPrice] = useState(0); 
   const { events, loading, book, fetchBookingByEventId } = useCrud();
   const { user } = useAuth();
 
@@ -29,12 +30,15 @@ const Events: React.FC = () => {
       seatsRemain,
     });
     setQuantity(1);
+    setTotalPrice(event.price);
   };
 
   const handleCloseModal = () => {
     setSelectedEvent(null);
     setQuantity(1); 
+    setTotalPrice(0);
   };
+
   const handlePersonChange = (increment: boolean) => {
     if (selectedEvent) {
       setQuantity((prev) => {
@@ -42,11 +46,15 @@ const Events: React.FC = () => {
           selectedEvent.seatsRemain ?? 0, 
           selectedEvent.maxseats ?? 0 
         );
-
+  
         if (increment) {
-          return prev < maxAllowed ? prev + 1 : prev; 
+          const newQuantity = prev < maxAllowed ? prev + 1 : prev;
+          setTotalPrice(newQuantity * selectedEvent.price);
+          return newQuantity;
         } else {
-          return prev > 1 ? prev - 1 : 1; 
+          const newQuantity = prev > 1 ? prev - 1 : 1;
+          setTotalPrice(newQuantity * selectedEvent.price);
+          return newQuantity;
         }
       });
     }
@@ -55,10 +63,8 @@ const Events: React.FC = () => {
   useEffect(() => {
     if (selectedEvent && user) {
       fetchBookingByEventId(user.id, selectedEvent.id);
-
     }
   }, [selectedEvent, user, fetchBookingByEventId])
-
 
   if (loading) {
     return <LoadingPage />;
@@ -82,78 +88,37 @@ const Events: React.FC = () => {
       return;
     }
     try {
-      // Solicita la creación de una sesión de pago
-
-
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          eventId: event.id,
-          userId: user.id,
           title: event.title,
           price: event.price,
           description: event.description,
-
-          // Puedes enviar el ID del evento o cualquier otra información que necesites
+          userId: user.id,
+          eventId: event.id,
+          quantity 
         }),
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error al crear la sesión de pago:', errorData.error);
+        return;
+      }
+  
       const { sessionId } = await response.json();
       const { error } = await stripe.redirectToCheckout({ sessionId });
-
+  
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }
-
     } catch (error) {
       console.error("Error al crear la sesión de pago", error);
     }
   };
-
-  /* const handleCheckout = async (event: IEvent) => {
-    const stripe = await stripePromise;
-    if (!user) {
-      Swal.fire({
-        icon: "error",
-        text: "You need to be logged in to add an experience.",
-      });
-      return;
-    }
-    if (!stripe) {
-      console.error("Stripe.js no se ha cargado.");
-      return;
-    }
-    try {
-      const booking = {
-        TransactionNumber: "123456785", // Ajusta esto si es necesario
-        Quantity: quantity,
-        Paid: event.price * quantity,
-        Date: new Date().toISOString(),
-        userId: user.id, // Asegúrate de que el objeto user tiene un id
-        eventsId: event.id,
-      };
-
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(booking),
-      });
-
-      const { sessionId } = await response.json();
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-
-      if (error) {
-        console.error("Error al redirigir a Stripe Checkout", error);
-      }
-    } catch (error) {
-      console.error("Error al crear la sesión de pago", error);
-    }
-  }; */
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 my-9">
@@ -272,6 +237,9 @@ const Events: React.FC = () => {
                   +
                 </button>
               </div>
+              <p className="text-gray-700 mb-2 mt-4">
+                <span className="font-bold text-black">Total Price:</span> ${totalPrice}
+              </p>
               <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
                 onClick={() => handleCheckout(selectedEvent)}
               >
