@@ -15,8 +15,7 @@ import LoadingPage from "../LoadingPage/loading";
 import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
-const stripekey = process.env.STRIPE_SECRET_KEY
+
 
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
@@ -75,7 +74,6 @@ const Events: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          "Authorization": `${stripekey}`
         },
         body: JSON.stringify({
           eventId: event.id,
@@ -96,7 +94,6 @@ const Events: React.FC = () => {
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }
-
 
     } catch (error) {
       console.error("Error al crear la sesión de pago", error);
