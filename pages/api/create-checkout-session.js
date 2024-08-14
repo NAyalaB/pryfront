@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-        const { title, price, description, bookingDetails} = req.body;
+        const { title, price, description, userId, eventId} = req.body;
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -25,10 +25,11 @@ export default async function handler(req, res) {
           },
         ],
         mode: 'payment',
-        success_url: 'http://localhost:3000/home',
+        success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: 'http://localhost:3000/experience',
         metadata:{
-          bookingDetails:JSON.stringify(bookingDetails),
+          userId,
+          eventId
         }
       });
 

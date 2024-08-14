@@ -54,7 +54,7 @@ const Events: React.FC = () => {
 
   useEffect(() => {
     if (selectedEvent && user) {
-    fetchBookingByEventId(user.id,selectedEvent.id);
+      fetchBookingByEventId(user.id, selectedEvent.id);
 
     }
   }, [selectedEvent, user, fetchBookingByEventId])
@@ -83,15 +83,7 @@ const Events: React.FC = () => {
     }
     try {
       // Solicita la creación de una sesión de pago
-      const bookingDetails: IBooking = {
-        ...book,
-        TransactionNumber: book.TransactionNumber,
-        Quantity: book.Quantity,
-        Paid: book.Paid,
-        Date: book.Date,
-        userId:book.userId,
-        eventsId:book.eventsId
-      }
+
 
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -100,10 +92,12 @@ const Events: React.FC = () => {
         },
         body: JSON.stringify({
           eventId: event.id,
+          userId: user.id,
           title: event.title,
           price: event.price,
           description: event.description,
-          bookingDetails
+
+          // Puedes enviar el ID del evento o cualquier otra información que necesites
         }),
       });
 
@@ -113,6 +107,7 @@ const Events: React.FC = () => {
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }
+
     } catch (error) {
       console.error("Error al crear la sesión de pago", error);
     }
