@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
 const apiUrl = process.env.NEXT_PUBLIC_API_URL
+const stripekey = process.env.STRIPE_SECRET_KEY
 
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
@@ -68,27 +69,21 @@ const Events: React.FC = () => {
     }
     try {
       // Solicita la creación de una sesión de pago
-      const bookingDetails: IBooking = {
-        ...book,
-        TransactionNumber: book.TransactionNumber,
-        Quantity: book.Quantity,
-        Paid: book.Paid,
-        Date: book.Date,
-        userId: book.userId,
-        eventsId: book.eventsId
-      }
+
 
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          "Authorization": `${stripekey}`
         },
         body: JSON.stringify({
           eventId: event.id,
+          userId: user.id,
           title: event.title,
           price: event.price,
           description: event.description,
-          bookingDetails
+
           // Puedes enviar el ID del evento o cualquier otra información que necesites
         }),
       });
@@ -100,26 +95,6 @@ const Events: React.FC = () => {
 
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
-      }
-
-      if (!error) {
-        await fetch(`${apiUrl}/booking`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            bookingDetails: {
-              ...book,
-              TransactionNumber: book.TransactionNumber,
-              Quantity: book.Quantity,
-              Paid: book.Paid,
-              Date: book.Date,
-              userId: book.userId,
-              eventsId: book.eventsId
-            }
-          })
-        })
       }
 
 
