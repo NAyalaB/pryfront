@@ -29,8 +29,9 @@ const Navbar: React.FC = () => {
 
             setToken(null);
             setUser(null);
-
-            window.location.href = `${apiUrl}/auth/logout`
+            // window.location.href = `${apiUrl}/auth/logout`;
+            const frontendUrl = process.env.FRONTEND_PROD_URL || process.env.FRONTEND_URL;
+            window.location.href = `${process.env.AUTH0_ISSUER_BASE_URL}/v2/logout?client_id=${process.env.AUTH0_CLIENT_ID}&returnTo=${encodeURIComponent(frontendUrl + '/home')}&federated`;
         } catch (error) {
             console.error('Error during logout:', error);
         }
