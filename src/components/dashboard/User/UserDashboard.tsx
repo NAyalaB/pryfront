@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "../../AuthContext";
 import { IUser } from "@/src/types/IUser";
 import Swal from "sweetalert2";
+import { validateFormEditProfile } from "@/src/helpers/userInfoValidation"; 
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface DashboardUserProps {
     userId: number;
@@ -15,6 +16,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
     const router = useRouter();
     const { user, setUser, token } = useAuth();
     const [formData, setFormData] = useState<IUser | null>(null);
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
@@ -45,6 +47,13 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData) return;
+
+        // Validar los datos del formulario
+        const validationErrors = validateFormEditProfile(formData);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
 
         const updateData: Partial<IUser> = {
             name: formData.name,
@@ -106,13 +115,14 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                 <section className="flex flex-col space-y-2 text-left">
                     {!isEditing ? (
                         <>
-                            <p className="font-bold">{`👤Name: ${user?.name}`}</p>
-                            <p className="font-bold">{`🎂Birthday: ${user?.birthday ? new Date(user.birthday).toISOString().split('T')[0] : ''}`}</p>
-                            <p className="font-bold">{`📧Email: ${user?.email}`}</p>
-                            <p className="font-bold">{`📍Address: ${user?.address}`}</p>
-                            <p className="font-bold">{`🌎Country: ${user?.country}`}</p>
-                            <p className="font-bold">{`📱Phone: ${user?.phone}`}</p>
-                            <p className="font-bold">{`🤧Allergies: ${user?.allergies}`}</p>
+                            <p className="font-bold">{`👤 Name: ${user?.name}`}</p>
+                            <p className="font-bold">{`🎂 Birthday: ${user?.birthday ? new Date(user.birthday).toISOString().split('T')[0] : ''}`}</p>
+                            <p className="font-bold">{`📧 Email: ${user?.email}`}</p>
+                            <p className="font-bold">{`📍 Address: ${user?.address}`}</p>
+                            <p className="font-bold">{`🌎 Country: ${user?.country}`}</p>
+                            <p className="font-bold">{`🏙️ City: ${user?.city}`}</p>
+                            <p className="font-bold">{`📱 Phone: ${user?.phone}`}</p>
+                            <p className="font-bold">{`🤧 Allergies: ${user?.allergies}`}</p>
                             <div className="pt-6 flex">
                                 <button
                                     onClick={() => setIsEditing(true)}
@@ -133,6 +143,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                     required
                                 />
+                                {errors.name && <p className="text-red-500">{errors.name}</p>}
                             </label>
                             <label>
                                 Birthday:
@@ -143,6 +154,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     onChange={handleChange}
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                 />
+                                {errors.birthday && <p className="text-red-500">{errors.birthday}</p>}
                             </label>
                             <label>
                                 Email:
@@ -165,6 +177,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     onChange={handleChange}
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                 />
+                                {errors.address && <p className="text-red-500">{errors.address}</p>}
                             </label>
                             <label>
                                 Country:
@@ -172,6 +185,17 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     type="text"
                                     name="country"
                                     value={formData?.country || ''}
+                                    onChange={handleChange}
+                                    className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
+                                />
+                                {errors.country && <p className="text-red-500">{errors.country}</p>}
+                            </label>
+                            <label>
+                                City:
+                                <input
+                                    type="text"
+                                    name="city"
+                                    value={formData?.city || ''}
                                     onChange={handleChange}
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                 />
@@ -185,6 +209,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     onChange={handleChange}
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                 />
+                                {errors.phone && <p className="text-red-500">{errors.phone}</p>}
                             </label>
                             <label>
                                 Allergies:
@@ -195,6 +220,7 @@ const DashboardUser: React.FC<DashboardUserProps> = ({ userId }) => {
                                     onChange={handleChange}
                                     className="block w-full p-2 mt-1 rounded bg-gray-700 text-white"
                                 />
+                                {errors.allergies && <p className="text-red-500">{errors.allergies}</p>}
                             </label>
                             <button
                                 type="submit"
