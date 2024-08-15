@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import jwt from 'jsonwebtoken';
+import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../AuthContext';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -23,8 +23,7 @@ const Navbar: React.FC = () => {
 
     const handleLogOut = async () => {
         try {
-            Cookies.remove("appSession");
-
+            
             localStorage.removeItem("userToken");
             localStorage.removeItem("userData");
 
@@ -44,7 +43,7 @@ const Navbar: React.FC = () => {
                 return null;
             }
 
-            const decoded: any = jwt.decode(token);
+            const decoded: any = jwtDecode(token);
             console.log('Decoded token:', decoded);
 
             if (decoded && decoded.sub) {

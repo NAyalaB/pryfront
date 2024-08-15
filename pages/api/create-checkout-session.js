@@ -1,8 +1,6 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
@@ -10,7 +8,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-        const { title, price, description, userId, eventId} = req.body;
+      const { title, price, description, quantity, bookingDetails } = req.body;
+      
+      if (!quantity || quantity < 1) {
+        res.status(400).json({ error: "Invalid quantity" });
+        return;
+      }
+
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -19,19 +23,18 @@ export default async function handler(req, res) {
               currency: 'usd',
               product_data: {
                 name: title,
-                description:description,
+                description: description,
               },
               unit_amount: price * 100,
             },
-            quantity: 1,
+            quantity: quantity, 
           },
         ],
         mode: 'payment',
-        success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: 'http://localhost:3000/home',
         cancel_url: 'http://localhost:3000/experience',
-        metadata:{
-          userId,
-          eventId
+        metadata: {
+          bookingDetails: JSON.stringify(bookingDetails), // Guarda los detalles de booking en el metadata
         }
       });
 

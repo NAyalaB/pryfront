@@ -16,32 +16,55 @@ import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
 
-
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
+  const [quantity, setQuantity] = useState(1); 
+  const [totalPrice, setTotalPrice] = useState(0); 
   const { events, loading, book, fetchBookingByEventId } = useCrud();
   const { user } = useAuth();
 
   const handleImageClick = (event: IEvent) => {
     const seatsRemain = event.maxseats - (event.totalPersons || 0);
-
     setSelectedEvent({
       ...event,
-      seatsRemain
+      seatsRemain,
     });
+    setQuantity(1);
+    setTotalPrice(event.price);
   };
 
   const handleCloseModal = () => {
     setSelectedEvent(null);
+    setQuantity(1); 
+    setTotalPrice(0);
+  };
+
+  const handlePersonChange = (increment: boolean) => {
+    if (selectedEvent) {
+      setQuantity((prev) => {
+        const maxAllowed = Math.min(
+          selectedEvent.seatsRemain ?? 0, 
+          selectedEvent.maxseats ?? 0 
+        );
+  
+        if (increment) {
+          const newQuantity = prev < maxAllowed ? prev + 1 : prev;
+          setTotalPrice(newQuantity * selectedEvent.price);
+          return newQuantity;
+        } else {
+          const newQuantity = prev > 1 ? prev - 1 : 1;
+          setTotalPrice(newQuantity * selectedEvent.price);
+          return newQuantity;
+        }
+      });
+    }
   };
 
   useEffect(() => {
     if (selectedEvent && user) {
       fetchBookingByEventId(user.id, selectedEvent.id);
-
     }
   }, [selectedEvent, user, fetchBookingByEventId])
-
 
   if (loading) {
     return <LoadingPage />;
@@ -51,14 +74,12 @@ const Events: React.FC = () => {
     return new Date(date).toLocaleString();
   };
 
-
   const handleCheckout = async (event: IEvent) => {
-    console.log("handleCheckout called", event);
     const stripe = await stripePromise;
     if (!user) {
       Swal.fire({
-        icon: 'error',
-        text: 'You need to be logged in to add products to the cart.'
+        icon: "error",
+        text: "You need to be logged in to add an experience.",
       });
       return;
     }
@@ -67,60 +88,52 @@ const Events: React.FC = () => {
       return;
     }
     try {
-      // Solicita la creación de una sesión de pago
-
-
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          eventId: event.id,
-          userId: user.id,
           title: event.title,
           price: event.price,
           description: event.description,
-
-          // Puedes enviar el ID del evento o cualquier otra información que necesites
+          userId: user.id,
+          eventId: event.id,
+          quantity 
         }),
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error al crear la sesión de pago:', errorData.error);
+        return;
+      }
+  
       const { sessionId } = await response.json();
-
-      // Redirige al usuario al checkout de Stripe
       const { error } = await stripe.redirectToCheckout({ sessionId });
-
+  
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }
-
     } catch (error) {
       console.error("Error al crear la sesión de pago", error);
     }
   };
-
-
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 my-9">
       <title>Experiences</title>
 
       {events.length === 0 ? (
-        <div
-          className="lg:flex flex-col justify-center items-center
-          text-2xl text-red-800 cursor-not-allowed
-          "
-        >
+        <div className="lg:flex flex-col justify-center items-center text-2xl text-red-800 cursor-not-allowed">
           No hay eventos disponibles
         </div>
       ) : (
         events.map((event) => (
-
           <div
             key={event.id}
             className="flex flex-col h-full bg-gray-800 rounded-md p-4 text-center space-y-4 
-               border-2 border-transparent transform transition-colors duration-500 hover:border-white"
+              border-2 border-transparent transform transition-colors duration-500 hover:border-white"
           >
             <div>
               <Image
@@ -149,7 +162,6 @@ const Events: React.FC = () => {
                 >
                   Event Details
                 </button>
-
               </div>
             </div>
           </div>
@@ -160,10 +172,7 @@ const Events: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white bg-opacity-95 p-6 rounded-lg w-11/12 md:w-1/2 max-h-screen overflow-y-auto relative">
             <div className="flex justify-end items-center mb-4">
-              <button
-                onClick={handleCloseModal}
-                className="text-black text-3xl"
-              >
+              <button onClick={handleCloseModal} className="text-black text-3xl">
                 X
               </button>
             </div>
@@ -178,16 +187,15 @@ const Events: React.FC = () => {
                 height={300}
                 className="rounded-lg mb-4"
               />
-              <p className=" text-gray-700 text-base leading-relaxed mt-4 whitespace-pre-line">{selectedEvent.description}</p>
+              <p className="text-gray-700 text-base leading-relaxed mt-4 whitespace-pre-line">
+                {selectedEvent.description}
+              </p>
               <p className="text-gray-700 mb-2">
                 <span className="font-bold text-black">Date:</span>{" "}
                 {formatEventDate(selectedEvent.date)}
               </p>
-
-
               <p className="text-gray-700 mb-2 flex items-center">
                 <span className="font-bold text-black">Location:</span>{" "}
-
                 <a
                   href={selectedEvent.location}
                   target="_blank"
@@ -202,8 +210,6 @@ const Events: React.FC = () => {
                   />
                 </a>
               </p>
-
-
               <p className="text-gray-700 mb-2">
                 <span className="font-bold text-black">MaxSeats:</span>{" "}
                 {selectedEvent.maxseats}
@@ -213,13 +219,31 @@ const Events: React.FC = () => {
                 {selectedEvent.price}
               </p>
               <p className="text-gray-700 mb-2">
-                <span className="font-bold text-black">SeatsRemain:</span>
+                <span className="font-bold text-black">Seats Remain:</span>{" "}
                 {selectedEvent.seatsRemain}
+              </p>
+              <div className="flex items-center mt-4">
+                <button
+                  className="bg-gray-200 rounded-l px-4 py-2 text-black"
+                  onClick={() => handlePersonChange(false)}
+                >
+                  -
+                </button>
+                <div className="bg-white px-4 py-2 text-black">{quantity}</div>
+                <button
+                  className="bg-gray-200 rounded-r px-4 py-2 text-black"
+                  onClick={() => handlePersonChange(true)}
+                >
+                  +
+                </button>
+              </div>
+              <p className="text-gray-700 mb-2 mt-4">
+                <span className="font-bold text-black">Total Price:</span> ${totalPrice}
               </p>
               <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
                 onClick={() => handleCheckout(selectedEvent)}
               >
-                BookNow
+                Add Experience
               </button>
             </div>
           </div>
