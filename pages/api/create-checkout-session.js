@@ -1,7 +1,7 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const urlHome = process.env.NEXT_PUBLIC_URL_FRONT
+/* const urlHome = process.env.NEXT_PUBLIC_URL_FRONT */
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
@@ -35,8 +35,11 @@ export default async function handler(req, res) {
           },
         ],
         mode: 'payment',
-        success_url: `/home || ${urlHome}/home`,
-        cancel_url: `${urlHome}/experience`,
+        success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: 'http://localhost:3000/experience',
+
+        /* success_url: `${urlHome}/home`,
+        cancel_url: `${urlHome}/experience`, */
         metadata: {
           bookingDetails: JSON.stringify(bookingDetails), // Guarda los detalles de booking en el metadata
         }
