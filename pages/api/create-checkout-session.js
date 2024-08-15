@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           },
         ],
         mode: 'payment',
-        success_url: `${urlHome}/home`,
+        success_url: `/home || ${urlHome}/home`,
         cancel_url: `${urlHome}/experience`,
         metadata: {
           bookingDetails: JSON.stringify(bookingDetails), // Guarda los detalles de booking en el metadata
