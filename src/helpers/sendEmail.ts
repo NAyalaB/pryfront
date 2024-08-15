@@ -1,5 +1,5 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_URL  
-const urlHome = process.env.NEXT_PUBLIC_URL_FRONT
+const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 export async function sendCreateUserEmail(email: string, name: string) {
     const response = await fetch(`${apiUrl}/email/CreateUserEmail`, {
@@ -9,8 +9,8 @@ export async function sendCreateUserEmail(email: string, name: string) {
       },
       body: JSON.stringify({
         to: email,
-        text: 'Gracias por registrarte',
-        urlHome: `${urlHome}/home`,
+        text: `Welcome to Our culinary experience, ${name} !`,
+        urlHome: `${frontendUrl}/home`,
         name: name,
       }),
     });

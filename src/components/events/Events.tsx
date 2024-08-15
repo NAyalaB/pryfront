@@ -83,6 +83,16 @@ const Events: React.FC = () => {
       });
       return;
     }
+
+    const { name, email, phone, birthday, allergies, address, country } = user;
+    if (!name || !email || !phone || !birthday || !allergies || !address || !country) {
+      Swal.fire({
+        icon: "error",
+        text: "You need to complete all your profile information to purchase an experience.",
+      });
+      return;
+    }
+
     if (!stripe) {
       console.error("Stripe.js no se ha cargado.");
       return;
