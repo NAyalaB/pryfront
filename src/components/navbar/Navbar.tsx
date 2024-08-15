@@ -114,14 +114,14 @@ const Navbar: React.FC = () => {
                                     <Image src="/assets/signin-icon.svg" alt="Sign Out" width={45} height={50} className="red-filter shadow-xl md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 xl:h-10" />
                                 </li>
                                 <li className="hover:underline decoration-4 underline-offset-8 mb-2" onClick={handleDashboardRedirect}>
-                                    <FaUser size={45} className="transition-transform duration-300 ease-in-out transform hover:scale-125 hover:text-yellow-500 cursor-pointer md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 lg:h-10" />
+                                    <FaUser size={45} className="transition-transform duration-300 ease-in-out transform hover:scale-125 hover:text-yellow-500 cursor-pointer md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 " />
                                 </li>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center gap-6 md:flex-row md:gap-4 lg:flex-row lg:gap-6 xl:flex-row xl:gap-8">
                                 <Link href="/login" onClick={handleLinkClick}>
                                     <li className="hover:underline decoration-4 underline-offset-8 mb-2">
-                                        <Image src="/assets/signout-icon.svg" alt="Sign In" width={45} height={50} className="green-filter shadow-xl md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 lg:h-10" />
+                                        <Image src="/assets/signout-icon.svg" alt="Sign In" width={45} height={50} className="green-filter shadow-xl md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 " />
                                     </li>
                                 </Link>
                             </div>

@@ -85,7 +85,7 @@ const Events: React.FC = () => {
     }
 
     const { name, email, phone, birthday, allergies, address, country, city } = user;
-    if (!name || !email || !phone || !birthday || !allergies || !address || !country|| !city) {
+    if (user.admin === false && (!name || !email || !phone || !birthday || !allergies || !address || !country|| !city)) {
       Swal.fire({
         icon: "error",
         text: "You need to complete all your profile information to purchase an experience.",

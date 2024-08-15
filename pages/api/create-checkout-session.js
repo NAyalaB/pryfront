@@ -1,14 +1,12 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL /* NEXT_PUBLIC_URL_FRONT */ || process.env.NEXT_PUBLIC_FRONTEND_UR          
+const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL          
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
  
-
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
