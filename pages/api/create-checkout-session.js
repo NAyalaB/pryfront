@@ -1,7 +1,7 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL        
+const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL        
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
@@ -38,9 +38,9 @@ export default async function handler(req, res) {
 
 
 
-        success_url: `${urlHome}/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `https://pryfront.vercel.app/success?session_id={CHECKOUT_SESSION_ID}`,
 
-        cancel_url: `${urlHome}/experience`,
+        cancel_url: `https://pryfront.vercel.app/experience`,
         metadata: {
           eventId: eventsId,
           userId: userId
