@@ -2,11 +2,9 @@
 // app/success/page.js
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCrud } from '@/src/components/CrudContext';
 
 const Success = () => {
     const router = useRouter();
-    const searchParams = new URLSearchParams(window.location.search);
     const [sessionId, setSessionId] = useState(null);
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
