@@ -19,7 +19,7 @@ const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [totalPrice, setTotalPrice] = useState(0);
-  const { events, loading, book, } = useCrud();
+  const { events, loading, } = useCrud();
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
