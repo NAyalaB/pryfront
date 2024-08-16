@@ -22,7 +22,7 @@ interface CrudContextProps {
   handleUserDelete: (id: number) => void;
   users: IUser[];
   bookings: IBooking[];
-  book: IBooking;
+  
 }
 
 const CrudContext = createContext<CrudContextProps | null>(null)
@@ -35,15 +35,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<IUser[]>([]);
   const [bookings, setBookings] = useState<IBooking[]>([]);
-  const [book, setBook] = useState<IBooking>({
-    id: 0,
-    TransactionNumber: 0,
-    Quantity: 0,
-    Paid: 0,
-    Date: new Date().toISOString(),
-    userId: undefined,
-    eventsId: undefined,
-  });
+  
 
   const handleEventDelete = async (id: number) => {
     const result = await Swal.fire({
@@ -147,36 +139,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
 
-  const fetchBookingByUserId = async (userId: number) => {
-
-    try {
-      const response = await fetch(`${apiUrl}/booking/byUser/${userId}`)
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setBook(data);
-
-    } catch (error) {
-      console.error("Failed to fetch booking by user ID:", error);
-    }
-  }
-
-  const fetchBookingByEventId = async (eventId: number) => {
-
-    const response = await fetch(`${apiUrl}/booking/byEvent/${eventId}`)
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    try {
-
-    } catch (error) {
-      console.error("Failed to fetch booking by event ID:", error);
-    }
-  }
+  
 
 
   useEffect(() => {
@@ -202,7 +165,7 @@ export const CrudProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 
   return (
-    <CrudContext.Provider value={{ setEvents, events, loading, handleEventDelete, handleUserDelete, users, bookings, book, }}>
+    <CrudContext.Provider value={{ setEvents, events, loading, handleEventDelete, handleUserDelete, users, bookings, }}>
       {children}
     </CrudContext.Provider>
   );

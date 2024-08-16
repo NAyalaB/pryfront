@@ -9,7 +9,7 @@ const Success = () => {
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const urlHome = process.env.NEXT_PUBLIC_URL_FRONT
+    const urlHome = process.env.NEXT_PUBLIC_FRONTEND_URL
 
     useEffect(() => {
         // Solo se accede a window.location.search después de que el componente se haya montado
@@ -66,7 +66,7 @@ const Success = () => {
         };
 
         handlePostPayment();
-    }, [sessionId, router, quantity, transactionNumber, apiUrl]);
+    }, [sessionId, router,transactionNumber, apiUrl]);
 
     return (
         <div className='border-s-2 text-green-700'>
