@@ -73,7 +73,6 @@ const Events: React.FC = () => {
   };
 
   const handleCheckout = async (event: IEvent) => {
-    localStorage.setItem("quantity", quantity.toString());
 
     const stripe = await stripePromise;
     if (!user) {
