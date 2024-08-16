@@ -10,9 +10,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 
 export default async function handler(req, res) {
+  console.log(`Received request with method: ${req.method}`); // Log el método recibido
   if (req.method === 'POST') {
     try {
-        const { title, price, description, userId, eventId} = req.body;
+      const { title, price, description, userId, eventId} = req.body;
+      console.log('Request body:', req.body); // Log el cuerpo de la solicitud
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
@@ -21,7 +23,7 @@ export default async function handler(req, res) {
               currency: 'usd',
               product_data: {
                 name: title,
-                description:description,
+                description: description,
               },
               unit_amount: price * 100,
             },
@@ -31,7 +33,7 @@ export default async function handler(req, res) {
         mode: 'payment',
         success_url: `${urlHome}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${urlHome}/experience`,
-        metadata:{
+        metadata: {
           userId,
           eventId
         }
