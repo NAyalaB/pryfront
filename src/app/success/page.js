@@ -9,6 +9,7 @@ const Success = () => {
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
+    const urlHome = process.env.NEXT_PUBLIC_FRONTEND_URL
 
     useEffect(() => {
         // Solo se accede a window.location.search después de que el componente se haya montado
@@ -26,51 +27,46 @@ const Success = () => {
                     const response = await fetch(`/api/get-session-info?session_id=${sessionId}`);
                     const sessionData = await response.json();
 
-                    const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
 
                     const eventId = parseInt(sessionData.metadata.eventId, 10);
                     const userId = parseInt(sessionData.metadata.userId, 10);
-
-                    console.log('Session Data:', sessionData); // Depuración
 
                     if (!sessionData || !sessionData.metadata) {
                         throw new Error('Invalid session data');
                     }
 
-                    const bookingResponse = await fetch(`${apiUrl}/booking`, {
-                        method: 'POST',
+
+                    const patchResponse = await fetch(`${apiUrl}/booking/${userId}/${eventId}`, {
+                        method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            transactionNumber: transactionNumber,
-                            quantity: 1,
-                            paid: sessionData.amount_total / 100,
-                            date: futureDate,
-                            eventsId: eventId,
-                            userId: userId,
+                            TransactionNumber: transactionNumber,
+
                         }),
-                    });
+                    })
 
-                    console.log('Booking Response Status:', bookingResponse.status); // Depuración
-                    const bookingResponseData = await bookingResponse.json();
-                    console.log('Booking Response Data:', bookingResponseData); // Depuración
-
-                    if (!bookingResponse.ok) {
-                        throw new Error('Failed to save booking');
+                    if (!patchResponse.ok) {
+                        throw new Error('Failed to update booking with transaction number')
                     }
+                    console.log('Booking updated successfully with transaction number:', transactionNumber);
 
-                    // Redirige a una página de confirmación o al perfil del usuario
-                    router.push('/home');
+                    router.push(`${urlHome}/home`);
+
+
                 } catch (error) {
                     console.error('Error saving booking:', error);
-                    // Puedes mostrar un mensaje de error al usuario aquí
+
                 }
+
+
             }
         };
 
         handlePostPayment();
-    }, [sessionId, router]);
+    }, [sessionId, router,transactionNumber, apiUrl]);
 
     return (
         <div className='border-s-2 text-green-700'>

@@ -1,17 +1,19 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL          
+const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL        
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
- 
+
+
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { title, price, description, quantity, bookingDetails } = req.body;
-      
+      const { title, price, description, quantity, userId, eventsId } = req.body;
+
       if (!quantity || quantity < 1) {
         res.status(400).json({ error: "Invalid quantity" });
         return;
@@ -29,16 +31,23 @@ export default async function handler(req, res) {
               },
               unit_amount: price * 100,
             },
-            quantity: quantity, 
+            quantity: quantity,
           },
         ],
         mode: 'payment',
-        success_url: `${urlHome}/home`,
+
+
+
+        success_url: `${urlHome}/success?session_id={CHECKOUT_SESSION_ID}`,
+
         cancel_url: `${urlHome}/experience`,
         metadata: {
-          bookingDetails: JSON.stringify(bookingDetails), // Guarda los detalles de booking en el metadata
+          eventId: eventsId,
+          userId: userId
         }
       });
+
+
 
       res.status(200).json({ sessionId: session.id });
     } catch (error) {
