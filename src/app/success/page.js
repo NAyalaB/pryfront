@@ -9,7 +9,7 @@ const Success = () => {
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const urlHome = process.env.NEXT_PUBLIC_FRONTEND_URL
+    const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL   
 
     useEffect(() => {
         // Solo se accede a window.location.search después de que el componente se haya montado
