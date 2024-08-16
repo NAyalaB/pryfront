@@ -18,10 +18,12 @@ const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r
 
 const Events: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
-  const [quantity, setQuantity] = useState(1); 
-  const [totalPrice, setTotalPrice] = useState(0); 
-  const { events, loading, book, fetchBookingByEventId } = useCrud();
+  const [totalPrice, setTotalPrice] = useState(0);
+  const { events, loading, book, } = useCrud();
   const { user } = useAuth();
+  const [quantity, setQuantity] = useState(1);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
   const handleImageClick = (event: IEvent) => {
     const seatsRemain = event.maxseats - (event.totalPersons || 0);
@@ -35,7 +37,7 @@ const Events: React.FC = () => {
 
   const handleCloseModal = () => {
     setSelectedEvent(null);
-    setQuantity(1); 
+    setQuantity(1);
     setTotalPrice(0);
   };
 
@@ -43,10 +45,10 @@ const Events: React.FC = () => {
     if (selectedEvent) {
       setQuantity((prev) => {
         const maxAllowed = Math.min(
-          selectedEvent.seatsRemain ?? 0, 
-          selectedEvent.maxseats ?? 0 
+          selectedEvent.seatsRemain ?? 0,
+          selectedEvent.maxseats ?? 0
         );
-  
+
         if (increment) {
           const newQuantity = prev < maxAllowed ? prev + 1 : prev;
           setTotalPrice(newQuantity * selectedEvent.price);
@@ -60,11 +62,7 @@ const Events: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (selectedEvent && user) {
-      fetchBookingByEventId(user.id, selectedEvent.id);
-    }
-  }, [selectedEvent, user, fetchBookingByEventId])
+
 
   if (loading) {
     return <LoadingPage />;
@@ -75,6 +73,8 @@ const Events: React.FC = () => {
   };
 
   const handleCheckout = async (event: IEvent) => {
+    localStorage.setItem("quantity", quantity.toString());
+
     const stripe = await stripePromise;
     if (!user) {
       Swal.fire({
@@ -93,6 +93,31 @@ const Events: React.FC = () => {
       return;
     }
 
+  
+      const bookingResponse = await fetch(`${apiUrl}/booking`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Quantity: quantity,
+          Paid: totalPrice,
+          Date: futureDate,
+          eventsId: event.id,
+          userId: user.id,
+        })
+      })
+
+      if (!bookingResponse.ok) {
+        const errorData = await bookingResponse.json();
+        Swal.fire({
+          icon: "error",
+          text: `Failed to save booking: ${errorData.error || 'Unknown error'}`,
+        });
+        return;
+      }
+
+
     if (!stripe) {
       console.error("Stripe.js no se ha cargado.");
       return;
@@ -108,20 +133,20 @@ const Events: React.FC = () => {
           price: event.price,
           description: event.description,
           userId: user.id,
-          eventId: event.id,
-          quantity 
+          eventsId: event.id,
+          quantity
         }),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error al crear la sesión de pago:', errorData.error);
         return;
       }
-  
+
       const { sessionId } = await response.json();
       const { error } = await stripe.redirectToCheckout({ sessionId });
-  
+
       if (error) {
         console.error("Error al redirigir a Stripe Checkout", error);
       }

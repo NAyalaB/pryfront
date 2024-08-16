@@ -26,7 +26,8 @@ const Navbar: React.FC = () => {
             
             localStorage.removeItem("userToken");
             localStorage.removeItem("userData");
-
+            localStorage.removeItem("quantity");
+            localStorage.removeItem("user");
             setToken(null);
             setUser(null);
 
