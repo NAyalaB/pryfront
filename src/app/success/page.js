@@ -9,7 +9,6 @@ const Success = () => {
     const generateNumericId = () => Math.floor(Math.random() * 1000000000);
     const transactionNumber = generateNumericId().toString();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const quantity = parseInt(localStorage.getItem('quantity') || '1', 10);
     const urlHome = process.env.NEXT_PUBLIC_URL_FRONT
 
     useEffect(() => {
