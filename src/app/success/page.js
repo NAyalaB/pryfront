@@ -33,7 +33,6 @@ const Success = () => {
                     const eventId = parseInt(sessionData.metadata.eventId, 10);
                     const userId = parseInt(sessionData.metadata.userId, 10);
 
-                    console.log('Session Data:', sessionData); // Depuración
                     if (!sessionData || !sessionData.metadata) {
                         throw new Error('Invalid session data');
                     }

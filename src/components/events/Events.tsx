@@ -84,8 +84,8 @@ const Events: React.FC = () => {
       return;
     }
 
-    const { name, email, phone, birthday, allergies, address, country } = user;
-    if (!name || !email || !phone || !birthday || !allergies || !address || !country) {
+    const { name, email, phone, birthday, allergies, address, country, city } = user;
+    if (user.admin === false && (!name || !email || !phone || !birthday || !allergies || !address || !country|| !city)) {
       Swal.fire({
         icon: "error",
         text: "You need to complete all your profile information to purchase an experience.",
@@ -110,6 +110,7 @@ const Events: React.FC = () => {
 
       if (!bookingResponse.ok) {
         const errorData = await bookingResponse.json();
+        console.error('Error Data:', errorData); // Agrega este log
         Swal.fire({
           icon: "error",
           text: `Failed to save booking: ${errorData.error || 'Unknown error'}`,
