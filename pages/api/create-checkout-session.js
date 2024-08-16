@@ -1,14 +1,12 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const urlHome = process.env.NEXT_PUBLIC_URL_FRONT 
+const urlHome = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL          
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
  
-
-
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
@@ -34,10 +32,7 @@ export default async function handler(req, res) {
             quantity: quantity, 
           },
         ],
-        mode: 'payment',/* 
-        success_url: `http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: 'http://localhost:3000/experience', */
-
+        mode: 'payment',
         success_url: `${urlHome}/home`,
         cancel_url: `${urlHome}/experience`,
         metadata: {

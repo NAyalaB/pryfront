@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaUser } from 'react-icons/fa';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL  
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const Navbar: React.FC = () => {
     const menuRef = useRef<HTMLInputElement>(null);
@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
 
     const handleLogOut = async () => {
         try {
-            
+
             localStorage.removeItem("userToken");
             localStorage.removeItem("userData");
 
@@ -92,38 +92,42 @@ const Navbar: React.FC = () => {
                 <input type="checkbox" id="menu" className="peer hidden" ref={menuRef} />
                 <label htmlFor="menu" className="bg-open-menu w-14 h-12 bg-cover bg-center cursor-pointer peer-checked:bg-close-menu z-50 md:hidden"></label>
 
-                <div className="fixed inset-0 bg-gradient-to-b from-black/70 to-white/70 translate-x-full peer-checked:translate-x-0 transition-transform md:static md:bg-none md:translate-x-0 font-lora">
-                    <ul className="absolute inset-x-0 top-24 p-12 w-[90%] mx-auto rounded-md h-max text-center grid gap-6 md:w-max md:bg-transparent md:p-0 md:grid-flow-col md:static text-xl mr-6">
+                <div className="fixed inset-0 bg-transparent peer-checked:bg-black peer-checked:opacity-90 translate-x-full peer-checked:translate-x-0 transition-transform md:static md:bg-none md:translate-x-0 font-lora z-40">
+
+                    <ul className="absolute inset-x-0 top-24 p-12 w-[90%] mx-auto rounded-md h-max text-center grid gap-6 md:gap-4 lg:gap-6 xl:gap-8 md:w-max md:bg-transparent md:p-0 md:grid-flow-col md:static lg:w-max lg:bg-transparent lg:p-0 lg:grid-flow-col lg:static xl:w-max xl:bg-transparent xl:p-0 xl:grid-flow-col xl:static text-xl mr-6">
                         <Link href="/home" onClick={handleLinkClick}>
-                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow">Home</li>
+                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow mb-2">Home</li>
                         </Link>
                         <Link href="/about" onClick={handleLinkClick}>
-                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow">About</li>
+                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow mb-2">About</li>
                         </Link>
                         <Link href="/experience" onClick={handleLinkClick}>
-                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow">Experiences</li>
+                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow mb-2">Experiences</li>
                         </Link>
                         <Link href="/contact" onClick={handleLinkClick}>
-                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow">Contact</li>
+                            <li className="hover:underline decoration-4 underline-offset-8 neon-shadow mb-2">Contact</li>
                         </Link>
 
                         {token || user ? (
-                            <>
-                                <li onClick={handleLogOut} className="hover:underline offset-8 decoration-yellow-500 cursor-pointer">
-                                    <Image src="/assets/signin-icon.svg" alt="Sign Out" width={45} height={50} className="red-filter shadow-xl" />
+                            <div className="flex flex-col items-center gap-6 md:flex-row md:gap-4 lg:flex-row lg:gap-6 xl:flex-row xl:gap-8">
+                                <li onClick={handleLogOut} className="hover:underline offset-8 decoration-yellow-500 cursor-pointer mb-2">
+                                    <Image src="/assets/signin-icon.svg" alt="Sign Out" width={45} height={50} className="red-filter shadow-xl md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 xl:h-10" />
                                 </li>
-                                <li className="hover:underline decoration-4 underline-offset-8" onClick={handleDashboardRedirect}>
-                                    <FaUser size={45} className="transition-transform duration-300 ease-in-out transform hover:scale-125 hover:text-yellow-500 cursor-pointer" />
+                                <li className="hover:underline decoration-4 underline-offset-8 mb-2" onClick={handleDashboardRedirect}>
+                                    <FaUser size={45} className="transition-transform duration-300 ease-in-out transform hover:scale-125 hover:text-yellow-500 cursor-pointer md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 " />
                                 </li>
-                            </>
+                            </div>
                         ) : (
-                            <Link href="/login" onClick={handleLinkClick}>
-                                <li className="hover:underline decoration-4 underline-offset-8">
-                                    <Image src="/assets/signout-icon.svg" alt="Sign In" width={45} height={50} className="green-filter shadow-xl" />
-                                </li>
-                            </Link>
+                            <div className="flex flex-col items-center gap-6 md:flex-row md:gap-4 lg:flex-row lg:gap-6 xl:flex-row xl:gap-8">
+                                <Link href="/login" onClick={handleLinkClick}>
+                                    <li className="hover:underline decoration-4 underline-offset-8 mb-2">
+                                        <Image src="/assets/signout-icon.svg" alt="Sign In" width={45} height={50} className="green-filter shadow-xl md:w-10 md:h-10 lg:w-10 lg:h-10 xl:w-10 " />
+                                    </li>
+                                </Link>
+                            </div>
                         )}
                     </ul>
+
                 </div>
             </nav>
         </header>
