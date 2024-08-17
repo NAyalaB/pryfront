@@ -8,7 +8,8 @@ const Success = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [transactionNumber, setTransactionNumber] = useState<string | null>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ||process.env.NEXT_PUBLIC_FRONTEND_PROD_URL ;   
+    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ||process.env.NEXT_PUBLIC_FRONTEND_PROD_URL ;
+    const vercelUrl =  process.env.NEXT_PUBLIC_FRONTEND_PROD_URL 
     //hola
     useEffect(() => {
         const generateNumericId = () => Math.floor(Math.random() * 1000000000);
@@ -54,7 +55,7 @@ const Success = () => {
                     }
                     console.log('Booking updated successfully with transaction number:', transactionNumber);
 
-                    router.push(`${frontendUrl}/home`);
+                    router.push(`${vercelUrl}/home`);
 
 
                 } catch (error) {
