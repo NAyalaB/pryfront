@@ -90,7 +90,7 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
                                 className={`w-full py-2 px-4 rounded-lg text-left hover:bg-gray-700 focus:outline-none ${selectedOption === 'Events' ? 'bg-gray-700 font-semibold' : ''}`}
                                 onClick={() => handleOptionChange('Events')}
                             >
-                                Event History
+                                Events
                             </button>
                         </li>
                     </ul>
@@ -103,7 +103,7 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
                     )}
                     
                     {selectedOption === 'Events' && (
-                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4">
+                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4 mr-6 mb-4">
                             <EventDashboard events={userEvents} bookings={userBookings} />
                         </div>
                     )}

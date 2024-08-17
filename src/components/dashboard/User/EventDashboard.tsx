@@ -1,68 +1,48 @@
+import { useState } from "react";
 import { IEvent } from "@/src/types/IEvent";
 import { IBooking } from "@/src/types/IBooking";
+import EventList from "./EventList";
 
 interface EventDashboardProps {
   events: IEvent[];
-  bookings: (IBooking & { eventTitle: string })[]; // Update to include eventTitle
+  bookings: (IBooking & { eventTitle: string })[];
 }
 
 const EventDashboard: React.FC<EventDashboardProps> = ({ events, bookings }) => {
+  const [view, setView] = useState<'active' | 'history'>('active');
   const now = new Date();
 
   const activeEvents = bookings.filter(event => new Date(event.Date) > now);
   const eventHistory = bookings.filter(event => new Date(event.Date) <= now);
 
   return (
-    <section className="flex flex-col justify-center items-center bg-gray-500-50 rounded-md w-[90%] mx-auto space-y-6 p-5 my-20">
-      <div className="bg-white bg-opacity-30 w-full flex flex-col text-center h-auto rounded-md mx-auto space-y-6 p-6">
-        <h1 className="text-gray-100 text-3xl font-bold underline">🎟️ Active Events</h1>
-        <ul className="flex flex-wrap gap-4 justify-center">
-          {activeEvents.length > 0 ? (
-            activeEvents.map(booking => (
-              <li key={booking.TransactionNumber} className="flex-none bg-gray-200 p-4 rounded-md shadow-md w-full sm:w-2/3 md:w-5/12">
-                <h3 className="text-gray-800 text-md font-semibold">{booking.eventTitle}</h3>
-                <p className="text-gray-600 text-sm">Transaction: {booking.TransactionNumber}</p>
-                <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>
-                <p className="text-gray-600 text-sm">Paid: ${booking.Paid}</p>
-                <p className="text-gray-600 text-sm">
-                  Date: {new Date(booking.Date).toLocaleString('en-US', { 
-                    dateStyle: 'short',
-                   timeStyle: 'short' 
-                  })}
-                </p>
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-600">No active events</p>
-          )}
+    <div>
+      <nav className="w-full bg-gray-800 rounded-md mb-6">
+    <section className="flex flex-col justify-center items-center rounded-md w-[90%] mx-auto space-y-6 p-5">
+        <ul className="flex justify-center space-x-6 py-4">
+          <li>
+            <button
+              onClick={() => setView('active')}
+              className={`px-4 py-2 rounded text-sm ${view === 'active' ? 'bg-gray-200 text-gray-800': 'bg-gray-600 text-white'}`}
+            >
+              🎟️ Active Events
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setView('history')}
+              className={`px-4 py-2 rounded text-sm ${view === 'history' ? 'bg-gray-200 text-gray-800': 'bg-gray-600 text-white'}`}
+            >
+              📖 Event History
+            </button>
+          </li>
         </ul>
-      </div>
 
-      <div className="bg-white bg-opacity-30 w-full flex flex-col text-center h-auto rounded-md mx-auto space-y-6 p-6">
-        <h1 className="text-gray-100 text-3xl font-bold underline">📖 Event History</h1>
-        <ul className="flex flex-wrap gap-4 justify-center">
-          {eventHistory.length > 0 ? (
-            eventHistory.map(booking => (
-              <li key={booking.TransactionNumber} className="flex-none bg-gray-200 p-4 rounded-md shadow-md w-full sm:w-2/3 md:w-5/12">
-                <h3 className="text-gray-800 text-md font-semibold">Event: {booking.eventTitle}</h3>
-                <p className="text-gray-600 text-sm">Transaction: {booking.TransactionNumber}</p>
-                <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>
-                <p className="text-gray-600 text-sm">Paid: ${booking.Paid}</p>
-                <p className="text-gray-600 text-sm">
-                  Date: {new Date(booking.Date).toLocaleString('en-US', { 
-                    dateStyle: 'short', 
-                    timeStyle: 'short' 
-                  })}
-                </p>
-              </li>
-            ))
-          ) : (
-            <p className="text-gray-600">No booking history</p>
-          )}
-        </ul>
-      </div>
-      
+      {view === 'active' && <EventList bookings={activeEvents} title="🎟️ Active Events" />}
+      {view === 'history' && <EventList bookings={eventHistory} title="📖 Event History" />}
     </section>
+      </nav>
+    </div>
   );
 };
 
