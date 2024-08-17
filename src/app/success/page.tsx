@@ -9,7 +9,7 @@ const Success = () => {
     const [transactionNumber, setTransactionNumber] = useState<string | null>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ||process.env.NEXT_PUBLIC_FRONTEND_PROD_URL ;   
-
+    //hola
     useEffect(() => {
         const generateNumericId = () => Math.floor(Math.random() * 1000000000);
         setTransactionNumber(generateNumericId().toString());
