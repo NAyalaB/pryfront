@@ -172,6 +172,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setUser(null);
 
         window.location.href = `${apiUrl}/auth/logout`;
+        
     };
 
     return (
