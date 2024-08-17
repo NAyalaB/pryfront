@@ -17,7 +17,7 @@ const UsersDashboardRender: React.FC<UsersDashboardRenderProps> = ({ users }) =>
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 2;
+  const usersPerPage = 5;
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;

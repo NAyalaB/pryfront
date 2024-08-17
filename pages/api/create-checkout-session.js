@@ -46,7 +46,7 @@ export default async function handler(req, res) {
         }
       });
 
-
+      console.log('Checkout session created:', session);
 
       res.status(200).json({ sessionId: session.id });
     } catch (error) {
