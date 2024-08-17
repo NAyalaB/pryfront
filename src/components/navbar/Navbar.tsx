@@ -29,8 +29,7 @@ const Navbar: React.FC = () => {
             localStorage.removeItem("user");
             setToken(null);
             setUser(null);
-
-            window.location.href = `${apiUrl}/auth/logout`
+            window.location.href = `${apiUrl}/auth/logout`;
         } catch (error) {
             console.error('Error during logout:', error);
         }
