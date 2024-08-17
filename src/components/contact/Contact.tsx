@@ -130,7 +130,7 @@ const Contact: React.FC = () => {
 
           <input type="hidden" name="contact_number" value={formData.contact_number} />
 
-          <Link href={"/home"}>
+          
           <div className="flex items-center justify-center">
             <button
               type="submit"
@@ -139,7 +139,7 @@ const Contact: React.FC = () => {
               Submit
             </button>
           </div>
-          </Link>
+     
         </form>
       </div>
     </div>
