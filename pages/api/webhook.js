@@ -11,8 +11,8 @@ export const config = {
         bodyParser: false,
     },
 };
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export default async function handler(req, res) {
@@ -25,27 +25,36 @@ export default async function handler(req, res) {
         try {
             event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
         } catch (err) {
-            console.error('Webhook signature verification failed.', err.message);
+            console.error('Fallo en la verificación de la firma del webhook:', err.message);
             return res.status(400).send(`Webhook Error: ${err.message}`);
         }
 
-        // Handle the event
+        // Manejo del evento
         if (event.type === 'payment_intent.payment_failed' || event.type === 'checkout.session.expired') {
             const session = event.data.object;
-            const eventId = session.metadata.eventId;
-            const userId = session.metadata.userId;
+            const eventId =  session.metadata.eventId;
+            const userId =  session.metadata.userId;
 
-            // Aquí haces la solicitud para eliminar la reserva
-            await fetch(`${apiUrl}/booking/${userId}/${eventId}`, {
-                method: 'DELETE',
-            });
+            console.log('Intentando eliminar la reserva para el usuario:', userId, 'y evento:', eventId);
 
-            console.log(`Reserva eliminada para usuario ${userId} y evento ${eventId}`);
+            try {
+                const response = await fetch(`${apiUrl}/booking/${userId}/${eventId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error al eliminar la reserva: ${response.statusText}`);
+                }
+
+                console.log(`Reserva eliminada para el usuario ${userId} y el evento ${eventId}`);
+            } catch (error) {
+                console.error('Error al eliminar la reserva:', error);
+            }
         }
 
         res.status(200).json({ received: true });
     } else {
         res.setHeader('Allow', 'POST');
-        res.status(405).end('Method Not Allowed');
+        res.status(405).end('Método no permitido');
     }
 }
