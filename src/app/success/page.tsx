@@ -6,14 +6,14 @@ import { useRouter } from 'next/navigation';
 const Success = () => {
     const router = useRouter();
     const [sessionId, setSessionId] = useState<string | null>(null);
-    const [transactionNumber, setTransactionNumber] = useState<string | null>(null);
+    // const [transactionNumber, setTransactionNumber] = useState<string | null>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ;
     
     //hola
     useEffect(() => {
-        const generateNumericId = () => Math.floor(Math.random() * 1000000000);
-        setTransactionNumber(generateNumericId().toString());
+        // const generateNumericId = () => Math.floor(Math.random() * 1000000000);
+        // setTransactionNumber(generateNumericId().toString());
         // Solo se accede a window.location.search después de que el componente se haya montado
         const searchParams = new URLSearchParams(window.location.search);
         const session_id = searchParams.get('session_id');
@@ -45,7 +45,7 @@ const Success = () => {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            TransactionNumber: transactionNumber,
+                            TransactionNumber: "123456786",
 
                         }),
                     })
@@ -53,7 +53,7 @@ const Success = () => {
                     if (!patchResponse.ok) {
                         throw new Error('Failed to update booking with transaction number')
                     }
-                    console.log('Booking updated successfully with transaction number:', transactionNumber);
+                    console.log('Booking updated successfully with transaction number:', );
 
                     router.push(`${frontendUrl}/home`);
 
@@ -68,7 +68,7 @@ const Success = () => {
         };
 
         handlePostPayment();
-    }, [sessionId, router,transactionNumber, apiUrl]);
+    }, [sessionId, router, apiUrl]);
 
     return (
         <div className='border-s-2 text-green-700'>
