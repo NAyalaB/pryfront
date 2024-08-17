@@ -1,5 +1,5 @@
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;  
-const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL;
+const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 
 export async function sendCreateBookingEmail(
   email: string,
