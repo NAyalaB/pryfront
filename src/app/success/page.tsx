@@ -5,13 +5,15 @@ import { useRouter } from 'next/navigation';
 
 const Success = () => {
     const router = useRouter();
-    const [sessionId, setSessionId] = useState(null);
-    const generateNumericId = () => Math.floor(Math.random() * 1000000000);
-    const transactionNumber = generateNumericId().toString();
+    const [sessionId, setSessionId] = useState<string | null>(null);
+    const [transactionNumber, setTransactionNumber] = useState<string | null>(null);
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
-    const urlHome = process.env.NEXT_PUBLIC_FRONTEND_URL
-
+    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL ;
+    
+    //hola
     useEffect(() => {
+        const generateNumericId = () => Math.floor(Math.random() * 1000000000);
+        setTransactionNumber(generateNumericId().toString());
         // Solo se accede a window.location.search después de que el componente se haya montado
         const searchParams = new URLSearchParams(window.location.search);
         const session_id = searchParams.get('session_id');
@@ -53,7 +55,7 @@ const Success = () => {
                     }
                     console.log('Booking updated successfully with transaction number:', transactionNumber);
 
-                    router.push(`${urlHome}/home`);
+                    router.push(`${frontendUrl}/home`);
 
 
                 } catch (error) {
