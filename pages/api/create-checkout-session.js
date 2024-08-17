@@ -35,7 +35,7 @@ export default async function handler(req, res) {
         ],
         mode: 'payment',
 
-
+        
 
         success_url: `${frontendUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
 
