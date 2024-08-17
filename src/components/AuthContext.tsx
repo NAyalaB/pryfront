@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setUser(mappedUser);
             const fetchUserProfile = async () => {
                 try {
-                    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_PROD_URL || process.env.NEXT_PUBLIC_FRONTEND_URL;
+                    const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
                     const response = await fetch(`${frontendUrl}/api/auth/me`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
