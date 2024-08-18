@@ -18,6 +18,11 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
+    console.log(`Page changed to: ${pageNumber}`); 
+};
+
+const getUniqueKey = (booking: IBooking) => {
+    return booking.TransactionNumber || `${booking.Date}-${Math.random()}`;
   };
 
   return (
@@ -26,7 +31,7 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
       <ul className="flex flex-wrap gap-4 justify-center">
         {currentEvents.length > 0 ? (
           currentEvents.map(booking => (
-            <li key={booking.TransactionNumber} className="flex-none bg-gray-200 p-4 rounded-md shadow-md w-full sm:w-2/3 md:w-5/12">
+            <li key={getUniqueKey(booking)} className="flex-none bg-gray-200 p-4 rounded-md shadow-md w-full sm:w-2/3 md:w-5/12">
               <h3 className="text-gray-800 text-md font-semibold">{booking.eventTitle}</h3>
               <p className="text-gray-600 text-sm">Transaction: {booking.TransactionNumber}</p>
               <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>

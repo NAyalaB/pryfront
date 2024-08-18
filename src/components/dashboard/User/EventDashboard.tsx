@@ -8,7 +8,7 @@ interface EventDashboardProps {
   bookings: (IBooking & { eventTitle: string })[];
 }
 
-const EventDashboard: React.FC<EventDashboardProps> = ({ events, bookings }) => {
+const EventDashboard: React.FC<EventDashboardProps> = ({ bookings }) => {
   const [view, setView] = useState<'active' | 'history'>('active');
   const now = new Date();
 
