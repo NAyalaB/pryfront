@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const buf = await buffer(req);
   const sig = req.headers['stripe-signature'] as string;
 
-  console.log('Received webhook request');
+  console.log('Receivede webhook request');
   console.log('Stripe Signature:', sig);
 
   if (!sig) {
