@@ -1,6 +1,7 @@
+// pages/api/stripe-webhook.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-import { buffer } from 'micro';
+import {buffer} from "../../../pryfront/src/helpers/buffer"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
@@ -11,7 +12,7 @@ const backApi = process.env.NEXT_PUBLIC_API_URL;
 
 export const config = {
   api: {
-    bodyParser: false,  // Desactiva el bodyParser para esta ruta
+    bodyParser: false, // Desactiva el bodyParser para esta ruta
   },
 };
 
@@ -22,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let event: Stripe.Event;
 
     try {
-      // Lee el cuerpo como un buffer
+      // Usa la función buffer para obtener el cuerpo de la solicitud
       const buf = await buffer(req);
       event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
     } catch (err: any) {
@@ -39,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const eventId = paymentIntent.metadata.eventId;
 
         try {
-          // Llama a tu endpoint DELETE para eliminar la reserva
           console.log(`Deleting reservation for user ${userId} and event ${eventId}`);
           await fetch(`${backApi}/booking/${userId}/${eventId}`, {
             method: 'DELETE',
@@ -55,7 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           return res.status(500).send('Error deleting reservation');
         }
         break;
-      // Maneja otros eventos según sea necesario
       default:
         console.warn(`Unhandled event type ${event.type}`);
     }
