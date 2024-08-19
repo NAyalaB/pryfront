@@ -41,8 +41,8 @@ export default async function handler(req, res) {
 
         cancel_url: `${frontendUrl}/experience`,
         metadata: {
-          eventId: eventsId.toString(),
-          userId: userId.toString(),
+          eventId: eventsId,
+          userId: userId,
         }
       });
 

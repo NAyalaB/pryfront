@@ -1,67 +1,74 @@
 // pages/api/stripe-webhook.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+
+import { NextApiRequest, NextApiResponse } from 'next';
+import { buffer } from 'micro';
 import Stripe from 'stripe';
-import {buffer} from "../../src/helpers/buffer"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
 });
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 const backApi = process.env.NEXT_PUBLIC_API_URL;
 
 export const config = {
   api: {
-    bodyParser: false, // Desactiva el bodyParser para esta ruta
+    bodyParser: false,
   },
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    const sig = req.headers['stripe-signature'] as string;
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const buf = await buffer(req);
+  const sig = req.headers['stripe-signature'] as string;
 
-    let event: Stripe.Event;
+  if (!sig) {
+    console.error('No stripe-signature header value was provided.');
+    return res.status(400).send('No stripe-signature header value was provided.');
+  }
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+  } catch (err: any) {
+    console.error(`Webhook Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.expired' || event.type === 'payment_intent.payment_failed') {
+    const sessionId = event.data.object.id as string;
 
     try {
-      // Usa la función buffer para obtener el cuerpo de la solicitud
-      const buf = await buffer(req);
-      event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
-    } catch (err: any) {
-      console.error(`Webhook Error: ${err.message}`);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      if (session.metadata) {
+        const userId = session.metadata.userId;
+        const eventId = session.metadata.eventId;
 
-    // Manejar el evento
-    switch (event.type) {
-      case 'payment_intent.payment_failed':
-        console.log('Handling payment_intent.payment_failed event');
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        const userId = paymentIntent.metadata.userId;
-        const eventId = paymentIntent.metadata.eventId;
-
-        try {
-          console.log(`Deleting reservation for user ${userId} and event ${eventId}`);
-          await fetch(`${backApi}/booking/${userId}/${eventId}`, {
+        if (userId && eventId) {
+          const response = await fetch(`${backApi}/booking/${userId}/${eventId}`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ userId, eventId }),
           });
 
-          console.log(`Reservation for user ${userId} and event ${eventId} has been deleted.`);
-        } catch (error) {
-          console.error('Error deleting reservation:', error);
-          return res.status(500).send('Error deleting reservation');
+          if (!response.ok) {
+            console.error(`Failed to delete reservation: ${response.statusText}`);
+          }
+        } else {
+          console.error('User ID or Event ID is missing in the metadata');
         }
-        break;
-      default:
-        console.warn(`Unhandled event type ${event.type}`);
-    }
+      } else {
+        console.error('Metadata is null');
+      }
 
-    res.json({ received: true });
+      res.json({ received: true });
+    } catch (error) {
+      console.error(`Failed to handle webhook event: ${error}`);
+      res.status(500).send('Internal Server Error');
+    }
   } else {
-    res.setHeader('Allow', 'POST');
-    res.status(405).end('Method Not Allowed');
+    res.json({ received: true });
   }
-}
+};
+
+export default handler;
