@@ -20,6 +20,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const buf = await buffer(req);
   const sig = req.headers['stripe-signature'] as string;
 
+  console.log('Received webhook request');
+  console.log('Stripe Signature:', sig);
+
   if (!sig) {
     console.error('No stripe-signature header value was provided.');
     return res.status(400).send('No stripe-signature header value was provided.');
@@ -33,6 +36,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(`Webhook Error: ${err.message}`);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
+
+  console.log('Event received:', event.type);
 
   if (event.type === 'checkout.session.expired' || event.type === 'payment_intent.payment_failed') {
     const sessionId = event.data.object.id as string;
@@ -53,6 +58,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
           if (!response.ok) {
             console.error(`Failed to delete reservation: ${response.statusText}`);
+          } else {
+            console.log(`Successfully deleted reservation for user ${userId} and event ${eventId}`);
           }
         } else {
           console.error('User ID or Event ID is missing in the metadata');
