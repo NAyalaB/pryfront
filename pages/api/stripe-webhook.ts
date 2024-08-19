@@ -1,7 +1,7 @@
 // pages/api/stripe-webhook.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
-import {buffer} from "../../../pryfront/src/helpers/buffer"
+import {buffer} from "../../src/helpers/buffer"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
