@@ -1,6 +1,6 @@
-// pages/api/stripe-webhook.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import Stripe from 'stripe';
+import { buffer } from 'micro';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2024-06-20',
@@ -9,6 +9,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 const backApi = process.env.NEXT_PUBLIC_API_URL;
 
+export const config = {
+  api: {
+    bodyParser: false,  // Desactiva el bodyParser para esta ruta
+  },
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     const sig = req.headers['stripe-signature'] as string;
@@ -16,13 +22,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    } catch (err:any) {
+      // Lee el cuerpo como un buffer
+      const buf = await buffer(req);
+      event = stripe.webhooks.constructEvent(buf, sig, endpointSecret);
+    } catch (err: any) {
       console.error(`Webhook Error: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
-    // Handle the event
+    // Manejar el evento
     switch (event.type) {
       case 'payment_intent.payment_failed':
         console.log('Handling payment_intent.payment_failed event');
