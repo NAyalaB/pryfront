@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { title, price, description, quantity, userId, eventsId } = req.body;
+      const { title, price, description, quantity, userId, eventsId, email } = req.body;
 
       if (!quantity || quantity < 1) {
         res.status(400).json({ error: "Invalid quantity" });
@@ -35,14 +35,15 @@ export default async function handler(req, res) {
         ],
         mode: 'payment',
 
-        
+
 
         success_url: `${frontendUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
 
         cancel_url: `${frontendUrl}/experience`,
         metadata: {
           eventId: eventsId,
-          userId: userId
+          userId: userId,
+          email: email
         }
       });
 

@@ -1,9 +1,8 @@
 "use client";
 //Types
-import { IBooking } from "@/src/types/IBooking";
 import { IEvent } from "@/src/types/IEvent";
 //Vendors
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
 //Contexts
@@ -84,7 +83,7 @@ const Events: React.FC = () => {
     }
 
     const { name, email, phone, birthday, allergies, address, country, city } = user;
-    if (user.admin === false && (!name || !email || !phone || !birthday || !allergies || !address || !country|| !city)) {
+    if (user.admin === false && (!name || !email || !phone || !birthday || !allergies || !address || !country || !city)) {
       Swal.fire({
         icon: "error",
         text: "You need to complete all your profile information to purchase an experience.",
@@ -92,30 +91,43 @@ const Events: React.FC = () => {
       return;
     }
 
-  
-      const bookingResponse = await fetch(`${apiUrl}/booking`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          Quantity: quantity,
-          Paid: totalPrice,
-          Date: futureDate,
-          eventsId: event.id,
-          userId: user.id,
-        })
-      })
 
-      if (!bookingResponse.ok) {
-        const errorData = await bookingResponse.json();
-        console.error('Error Data:', errorData); // Agrega este log
+    const bookingResponse = await fetch(`${apiUrl}/booking`, {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Quantity: quantity,
+        Paid: totalPrice,
+        Date: futureDate,
+        eventsId: event.id,
+        userId: user.id,
+      })
+    })
+
+    if (!bookingResponse.ok) {
+      const errorData = await bookingResponse.json();
+      console.error('Error Data:', errorData); // Agrega este log
+      if (errorData.message.includes("date cannot be in the past")) {
         Swal.fire({
           icon: "error",
-          text: `Failed to save booking: ${errorData.error || 'Unknown error'}`,
+          text: "The date cannot be in the past.",
         });
-        return;
+      } else if (errorData.message.includes("only")) {
+        Swal.fire({
+          icon: "error",
+          text: `There are only ${errorData.message.match(/\d+/)[0]} seats available.`,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          text: `${errorData.message || 'Unknown error'}`,
+        });
       }
+      return;
+    }
+
 
 
     if (!stripe) {
@@ -134,7 +146,8 @@ const Events: React.FC = () => {
           description: event.description,
           userId: user.id,
           eventsId: event.id,
-          quantity
+          quantity,
+          email
         }),
       });
 
@@ -154,6 +167,8 @@ const Events: React.FC = () => {
       console.error("Error al crear la sesión de pago", error);
     }
   };
+
+  const isDisabled = selectedEvent ? selectedEvent.seatsRemain === 0 : true;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 my-9">
@@ -275,8 +290,10 @@ const Events: React.FC = () => {
               <p className="text-gray-700 mb-2 mt-4">
                 <span className="font-bold text-black">Total Price:</span> ${totalPrice}
               </p>
-              <button className="bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full"
-                onClick={() => handleCheckout(selectedEvent)}
+              <button
+                className={`bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => !isDisabled && handleCheckout(selectedEvent)}
+                disabled={isDisabled}
               >
                 Add Experience
               </button>
