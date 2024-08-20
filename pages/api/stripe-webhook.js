@@ -1,10 +1,11 @@
 import Stripe from 'stripe';
-console.log("holaaaaaaaaaaaaaaaaaaaaaaaaaaaaa desde webhook");
+import { buffer } from '../../src/helpers/buffer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
-const apiUrl = process.env.NEXT_PUBLIC_API_URL
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const sig = req.headers['stripe-signature'];
