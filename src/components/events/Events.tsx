@@ -168,7 +168,8 @@ const Events: React.FC = () => {
     }
   };
 
-  const isDisabled = selectedEvent ? selectedEvent.seatsRemain === 0 : true;
+  const isSoldOut = selectedEvent ? (selectedEvent.seatsRemain ?? 0) === 0 : true;
+  const isOutOfSeats = selectedEvent ? (selectedEvent.seatsRemain ?? 0) <= 0 : true;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 my-9">
@@ -272,10 +273,14 @@ const Events: React.FC = () => {
                 <span className="font-bold text-black">Seats Remain:</span>{" "}
                 {selectedEvent.seatsRemain}
               </p>
+
+              {selectedEvent && (selectedEvent.seatsRemain ?? 0) > 0 && (
+              <div>
               <div className="flex items-center mt-4">
                 <button
                   className="bg-gray-200 rounded-l px-4 py-2 text-black"
                   onClick={() => handlePersonChange(false)}
+                  disabled={quantity <= 1}
                 >
                   -
                 </button>
@@ -283,6 +288,7 @@ const Events: React.FC = () => {
                 <button
                   className="bg-gray-200 rounded-r px-4 py-2 text-black"
                   onClick={() => handlePersonChange(true)}
+                  disabled={quantity >= (selectedEvent.seatsRemain ?? 0)}
                 >
                   +
                 </button>
@@ -290,12 +296,14 @@ const Events: React.FC = () => {
               <p className="text-gray-700 mb-2 mt-4">
                 <span className="font-bold text-black">Total Price:</span> ${totalPrice}
               </p>
+              </div>
+              )}
               <button
-                className={`bg-yellow-500 rounded-md hover:bg-yellow-700 px-8 py-4 mt-4 w-full ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={() => !isDisabled && handleCheckout(selectedEvent)}
-                disabled={isDisabled}
+                className={`rounded-md px-8 py-4 ${isSoldOut ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-700'}`}
+                onClick={() => !isSoldOut && handleCheckout(selectedEvent)}
+                disabled={isSoldOut}
               >
-                Add Experience
+                {isSoldOut ? "Sold Out" : "Add experience"}
               </button>
             </div>
           </div>
