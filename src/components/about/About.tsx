@@ -10,7 +10,7 @@ const About: React.FC = () => {
         className="wrapper grid gap-8 justify-items-center 
       items-center pb-12 md:py-24 bg-gray-500-50 rounded-md mb-24 mt-12"
       >
-        <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl underline">
+        <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl ">
           Chef Tony Stephen
         </h1>
 
@@ -52,7 +52,7 @@ const About: React.FC = () => {
         />
 
         <article className="text-center space-y-6 md:space-y-8 font-lora">
-          <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl underline">
+          <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl ">
             Quality Ingredients
           </h1>
 
@@ -84,7 +84,7 @@ const About: React.FC = () => {
         />
 
         <article className="text-center space-y-6 md:space-y-8 font-lora order-1">
-          <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl underline">
+          <h1 className=" text-gray-100 text-3xl font-bold md:text-4xl ">
             Crafting Exceptional Drinks for Exclusive Events
           </h1>
 
