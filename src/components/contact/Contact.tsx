@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
+import { useRouter } from "next/navigation";
+
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +22,7 @@ const Contact: React.FC = () => {
   });
 
   const formRef = useRef<HTMLFormElement | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     emailjs.init("yHq_wXYUIweiHBmtf");
@@ -64,6 +67,7 @@ const Contact: React.FC = () => {
         .then(
           () => {
             console.log("SUCCESS!");
+            router.push("/home");
           },
           (error) => {
             console.log("FAILED...", error);
