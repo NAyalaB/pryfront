@@ -30,36 +30,38 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
 
     useEffect(() => {
         const fetchEvents = async () => {
+            setUserBookings([])
+            setUserEvents([]);
             try {
+    
                 const eventsResponse = await fetch(`${apiUrl}/events/eventsWithBookingsAndUsers`);
                 const eventsData: IEventWithBookings[] = await eventsResponse.json();
-
+    
                 const bookingsResponse = await fetch(`${apiUrl}/booking/byUser/${userId}`);
                 const bookingsData: IBooking[] = await bookingsResponse.json();
-
-                const eventsMap = new Map<number, IEvent>(eventsData.map(event => [event.id, event]));
-
+    
                 const bookingsWithTitles = await Promise.all(bookingsData.map(async (booking) => {
                     const eventResponse = await fetch(`${apiUrl}/events/${booking.eventsId}`);
                     const eventData = await eventResponse.json();
-
+    
                     return {
                         ...booking,
                         eventTitle: eventData.title || 'Unknown Event'
                     };
                 }));
-
+    
                 setUserEvents(eventsData);
                 setUserBookings(bookingsWithTitles);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-
+    
         if (userId) {
             fetchEvents();
         }
     }, [userId]);
+    
 
     const handleOptionChange = (option: 'Profile' | 'Events') => {
         setSelectedOption(option);
@@ -90,7 +92,7 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
                                 className={`w-full py-2 px-4 rounded-lg text-left hover:bg-gray-700 focus:outline-none ${selectedOption === 'Events' ? 'bg-gray-700 font-semibold' : ''}`}
                                 onClick={() => handleOptionChange('Events')}
                             >
-                                Event History
+                                Events
                             </button>
                         </li>
                     </ul>
@@ -103,7 +105,7 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
                     )}
                     
                     {selectedOption === 'Events' && (
-                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4">
+                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4 mr-6 mb-4">
                             <EventDashboard events={userEvents} bookings={userBookings} />
                         </div>
                     )}

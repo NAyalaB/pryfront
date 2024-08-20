@@ -1,7 +1,7 @@
 // pages/api/create-checkout-session.js
 import Stripe from "stripe";
 
-const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;   
+const frontendUrl = process.env.NEXT_PUBLIC_FRONTEND_URL;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
@@ -11,7 +11,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { title, price, description, quantity, userId, eventsId } = req.body;
+      const { title, price, description, quantity, userId, eventsId, email } = req.body;
 
       if (!quantity || quantity < 1) {
         res.status(400).json({ error: "Invalid quantity" });
@@ -35,18 +35,19 @@ export default async function handler(req, res) {
         ],
         mode: 'payment',
 
-        
+
 
         success_url: `${frontendUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
 
         cancel_url: `${frontendUrl}/experience`,
         metadata: {
           eventId: eventsId,
-          userId: userId
+          userId: userId,
+          email: email
         }
       });
 
-
+      console.log('Checkout session created:', session);
 
       res.status(200).json({ sessionId: session.id });
     } catch (error) {

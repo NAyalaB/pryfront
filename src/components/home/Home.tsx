@@ -24,7 +24,7 @@ const {user} = useAuth();
                 />
                 <div className="space-y-8 text-slate-100 leading-loose text-center md:text-left text-xl">
 
-                <h1 className="text-gray-100 text-3xl font-bold md:text-4xl underline">Experience Culinary Excellence with Chef Tony Stephen</h1>
+                <h1 className="text-gray-100 text-3xl font-bold md:text-4xl">Experience Culinary Excellence with Chef Tony Stephen</h1>
 
                 <p> Chef Tony Stephen offers an unparalleled culinary experience, 
                     meticulously crafting each dish to perfection. 
@@ -73,7 +73,7 @@ const {user} = useAuth();
                 />
                 <div className="space-y-8 text-slate-100 text-center leading-loose md:text-center text-xl grid">
 
-                <h1 className="text-gray-100 text-3xl font-bold md:text-4xl underline">Booking</h1>
+                <h1 className="text-gray-100 text-3xl font-bold md:text-4xl ">Booking</h1>
 
                 <p> To make a reservation, please click the link below to be redirected to our experiences page, 
                     where you can view the current events Chef Tony is offering.</p>
