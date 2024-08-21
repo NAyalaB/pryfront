@@ -108,7 +108,7 @@ const Events: React.FC = () => {
 
     if (!bookingResponse.ok) {
       const errorData = await bookingResponse.json();
-      console.error('Error Data:', errorData); // Agrega este log
+      console.error('Error Data:', errorData); 
       if (errorData.message.includes("date cannot be in the past")) {
         Swal.fire({
           icon: "error",
@@ -275,28 +275,35 @@ const Events: React.FC = () => {
               </p>
 
               {selectedEvent && (selectedEvent.seatsRemain ?? 0) > 0 && (
-              <div>
-              <div className="flex items-center mt-4">
-                <button
-                  className="bg-gray-200 rounded-l px-4 py-2 text-black"
-                  onClick={() => handlePersonChange(false)}
-                  disabled={quantity <= 1}
-                >
-                  -
-                </button>
-                <div className="bg-white px-4 py-2 text-black">{quantity}</div>
-                <button
-                  className="bg-gray-200 rounded-r px-4 py-2 text-black"
-                  onClick={() => handlePersonChange(true)}
-                  disabled={quantity >= (selectedEvent.seatsRemain ?? 0)}
-                >
-                  +
-                </button>
-              </div>
-              <p className="text-gray-700 mb-2 mt-4">
-                <span className="font-bold text-black">Total Price:</span> ${totalPrice}
-              </p>
-              </div>
+                <div className="flex flex-col items-center mt-4">
+                  <div className="flex items-center">
+                    <button
+                      className="bg-gray-200 rounded-l px-4 py-2 text-black"
+                      onClick={() => handlePersonChange(false)}
+                      disabled={quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <div className="bg-white px-4 py-2 text-black">{quantity}</div>
+                    <button
+                      className="bg-gray-200 rounded-r px-4 py-2 text-black"
+                      onClick={() => handlePersonChange(true)}
+                      disabled={quantity >= (selectedEvent.seatsRemain ?? 0)}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {(selectedEvent.seatsRemain ?? 0) === 1 && (
+                    <p className="text-red-500 mt-2">1 seat remain</p>
+                  )}
+
+                  {quantity >= (selectedEvent.seatsRemain ?? 0) && (
+                    <p className="text-red-500 mt-2">You have reached the maximum available seats.</p>
+                  )}
+                  <p className="text-gray-700 mb-2 mt-4">
+                    <span className="font-bold text-black">Total Price:</span> ${totalPrice}
+                  </p>
+                </div>
               )}
               <button
                 className={`rounded-md px-8 py-4 ${isSoldOut ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-700'}`}
