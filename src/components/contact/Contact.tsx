@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 
 const Contact: React.FC = () => {
@@ -66,7 +67,12 @@ const Contact: React.FC = () => {
         )
         .then(
           () => {
-            console.log("SUCCESS!");
+            Swal.fire({
+              title: "Successful contact",
+              text: "Your message has been sent successfully!",
+              icon: "success",
+              confirmButtonText: "OK",
+            });
             router.push("/home");
           },
           (error) => {
@@ -126,7 +132,7 @@ const Contact: React.FC = () => {
 
             <textarea
               name="message"
-              className="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-b-white appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer input:valid:border-blue-600 input-autofill"
+              className="bg-slate-700 items-center flex pt-4 pl-2 px-0 w-full text-sm text-white  border-0 border-b-2 border-b-white appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer input:valid:border-blue-600 input-autofill"
               onChange={handleChange}
               value={formData.message}
             />
