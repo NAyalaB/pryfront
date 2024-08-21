@@ -108,7 +108,7 @@ const Events: React.FC = () => {
 
     if (!bookingResponse.ok) {
       const errorData = await bookingResponse.json();
-      console.error('Error Data:', errorData); 
+      console.error('Error Data:', errorData);
       if (errorData.message.includes("date cannot be in the past")) {
         Swal.fire({
           icon: "error",
@@ -184,15 +184,14 @@ const Events: React.FC = () => {
           <div
             key={event.id}
             className="flex flex-col h-full bg-gray-800 rounded-md p-4 text-center space-y-4 
-              border-2 border-transparent transform transition-colors duration-500 hover:border-white"
+    border-2 border-transparent transform transition-colors duration-500 hover:border-white"
           >
-            <div>
+            <div className="relative w-full h-64">
               <Image
                 src={event.picture}
                 alt="Event Image"
-                layout="responsive"
-                width={500}
-                height={500}
+                layout="fill"
+                objectFit="cover"
                 className="rounded-lg"
               />
             </div>
