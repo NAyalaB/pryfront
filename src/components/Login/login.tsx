@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { ValidateLogin } from "./validateLogin";
 import { LoginFormErrors, LoginForm } from "./interfaces";
@@ -15,7 +15,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const LoginFormClient: React.FC = () => {
   const router = useRouter();
-  const { setToken, setUser } = useAuth();
+  const { setToken, setUser, token } = useAuth();
 
   const [dataUser, setDataUser] = useState<LoginForm>({
     email: "",
@@ -28,6 +28,12 @@ const LoginFormClient: React.FC = () => {
   });
 
   const [formError, setFormError] = useState<string>("");
+
+ useEffect(() => {
+    if (token) {
+      router.push("/home"); 
+    }
+  }, [token, router]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDataUser({

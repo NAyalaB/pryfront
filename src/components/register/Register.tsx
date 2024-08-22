@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { format, parseISO } from "date-fns";
-
 import { IRegisterProps } from "@/src/types/IRegisterProps";
 import { IRegisterErrorProps } from "@/src/types/IRegisterErrorProps";
 import { validateFormRegister } from "@/src/helpers/formValidation";
@@ -10,9 +8,12 @@ import { register } from "../../helpers/authRegister";
 import { sendCreateUserEmail } from "@/src/helpers/sendEmail";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import { useAuth } from "../AuthContext";
+
 
 const Register: React.FC = () => {
   const router = useRouter();
+  const { token } = useAuth();
 
   const [dataUser, setDataUser] = useState<IRegisterProps>({
     email: "",
@@ -47,6 +48,12 @@ const Register: React.FC = () => {
     hasSpecialChar: false,
     hasValidLength: false,
   });
+
+  useEffect(() => {
+    if (token) {
+      router.push("/home"); 
+    }
+  }, [token, router]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
