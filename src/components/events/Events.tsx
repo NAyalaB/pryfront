@@ -23,6 +23,7 @@ const Events: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
   const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  const [isPastEvent, setIsPastEvent] = useState(false);
 
   const handleImageClick = (event: IEvent) => {
     const seatsRemain = event.maxseats - (event.totalPersons || 0);
@@ -32,6 +33,9 @@ const Events: React.FC = () => {
     });
     setQuantity(1);
     setTotalPrice(event.price);
+
+    const isPastEvent = new Date(event.date) < new Date();
+    setIsPastEvent(isPastEvent);
   };
 
   const handleCloseModal = () => {
@@ -41,7 +45,7 @@ const Events: React.FC = () => {
   };
 
   const handlePersonChange = (increment: boolean) => {
-    if (selectedEvent) {
+    if (selectedEvent && !isPastEvent) {
       setQuantity((prev) => {
         const maxAllowed = Math.min(
           selectedEvent.seatsRemain ?? 0,
@@ -168,6 +172,7 @@ const Events: React.FC = () => {
     }
   };
 
+  
   const isSoldOut = selectedEvent ? (selectedEvent.seatsRemain ?? 0) === 0 : true;
   const isOutOfSeats = selectedEvent ? (selectedEvent.seatsRemain ?? 0) <= 0 : true;
 
@@ -273,7 +278,7 @@ const Events: React.FC = () => {
                 {selectedEvent.seatsRemain}
               </p>
 
-              {selectedEvent && (selectedEvent.seatsRemain ?? 0) > 0 && (
+              {!isPastEvent && selectedEvent && (selectedEvent.seatsRemain ?? 0) > 0 && (
                 <div className="flex flex-col items-center mt-4">
                   <div className="flex items-center">
                     <button
@@ -305,12 +310,17 @@ const Events: React.FC = () => {
                 </div>
               )}
               <button
-                className={`rounded-md px-8 py-4 ${isSoldOut ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-700'}`}
-                onClick={() => !isSoldOut && handleCheckout(selectedEvent)}
-                disabled={isSoldOut}
-              >
-                {isSoldOut ? "Sold Out" : "Add experience"}
-              </button>
+                  className={`bg-yellow-500 text-white rounded-md px-8 py-4 mt-4 ${
+                    isSoldOut || isPastEvent ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                  onClick={() => !isSoldOut && !isPastEvent && handleCheckout(selectedEvent)}
+                >
+                  {isPastEvent
+                    ? "Event Finished"
+                    : isSoldOut
+                    ? "Sold Out"
+                    : "Add Experience"}
+                </button>
             </div>
           </div>
         </div>

@@ -1,8 +1,13 @@
 import { IBooking } from "@/src/types/IBooking";
+import { IEvent } from "@/src/types/IEvent"; // Asegúrate de importar IEvent
 import { useState } from "react";
 
+export interface IBookingWithEvent extends IBooking {
+  event: IEvent;
+}
+
 interface EventListProps {
-  bookings: (IBooking & { eventTitle: string })[];
+  bookings: IBookingWithEvent[];
   title: string;
 }
 
@@ -18,11 +23,11 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    console.log(`Page changed to: ${pageNumber}`); 
-};
+    console.log(`Page changed to: ${pageNumber}`);
+  };
 
-const getUniqueKey = (booking: IBooking) => {
-    return booking.TransactionNumber || `${booking.Date}-${Math.random()}`;
+  const getUniqueKey = (booking: IBookingWithEvent) => {
+    return booking.TransactionNumber || `${booking.event.date}-${Math.random()}`;
   };
 
   return (
@@ -32,14 +37,14 @@ const getUniqueKey = (booking: IBooking) => {
         {currentEvents.length > 0 ? (
           currentEvents.map(booking => (
             <li key={getUniqueKey(booking)} className="flex-none bg-gray-200 p-4 rounded-md shadow-md w-full sm:w-2/3 md:w-5/12">
-              <h3 className="text-gray-800 text-md font-semibold">{booking.eventTitle}</h3>
+              <h3 className="text-gray-800 text-md font-semibold">{booking.event.title}</h3>
               <p className="text-gray-600 text-sm">Transaction: {booking.TransactionNumber}</p>
               <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>
               <p className="text-gray-600 text-sm">Paid: ${booking.Paid}</p>
               <p className="text-gray-600 text-sm">
-                Date: {new Date(booking.Date).toLocaleString('en-US', { 
+                Date: {new Date(booking.event.date).toLocaleString('en-US', {
                   dateStyle: 'short',
-                  timeStyle: 'short' 
+                  timeStyle: 'short'
                 })}
               </p>
             </li>
