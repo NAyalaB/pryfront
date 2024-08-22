@@ -15,7 +15,7 @@ const AnimacionLogo = () => {
         <Link href="/home">
           <Image
             className="w-full h-full object-contain drop-shadow-custom animate-rotate-y cursor-pointer"
-            src="/assets/logoCocinero2.png"
+            src="/assets/logo.png"
             alt="Logo"
             width={300}
             height={230}

@@ -126,8 +126,8 @@ const SuccessClient = () => {
     }, [eventDetails, email, apiUrl, router, frontendUrl]);
 
     return (
-        <div className='text-green-700 bg-gray-800 border text-5xl w-[90%] flex items-center justify-center mx-auto my-10 md:h-64 text-center'>
-            ✅✅Thank you for your purchase! Your reservation is being processed.✅✅
+        <div className='text-gray-100 rounded-md bg-gray-800 border text-3xl w-[40%] flex items-center justify-center mx-auto my-10 md:h-64 text-center'>
+            Thank you for your purchase! <hr /> Your reservation is being processed.
         </div>
     );
 };
