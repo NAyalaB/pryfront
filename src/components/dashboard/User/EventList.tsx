@@ -1,6 +1,7 @@
+'use client'
 import { IBooking } from "@/src/types/IBooking";
 import { IEvent } from "@/src/types/IEvent"; 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface IBookingWithEvent extends IBooking {
   event: IEvent;
@@ -13,7 +14,26 @@ interface EventListProps {
 
 const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const eventsPerPage = 4;
+  const [eventsPerPage, setEventsPerPage] = useState(4);
+
+  useEffect(() => {
+    const updateEventsPerPage = () => {
+      if (window.innerWidth < 650) {
+        setEventsPerPage(2); 
+      } else if (window.innerWidth < 768) {
+        setEventsPerPage(3); 
+      } else {
+        setEventsPerPage(4); 
+      }
+    };
+
+    updateEventsPerPage(); 
+    window.addEventListener('resize', updateEventsPerPage); 
+
+    return () => {
+      window.removeEventListener('resize', updateEventsPerPage); 
+    };
+  }, []);
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
