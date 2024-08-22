@@ -1,5 +1,5 @@
 import { IBooking } from "@/src/types/IBooking";
-import { IEvent } from "@/src/types/IEvent"; // Asegúrate de importar IEvent
+import { IEvent } from "@/src/types/IEvent"; 
 import { useState } from "react";
 
 export interface IBookingWithEvent extends IBooking {
@@ -42,7 +42,7 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
               <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>
               <p className="text-gray-600 text-sm">Paid: ${booking.Paid}</p>
               <p className="text-gray-600 text-sm">
-                Date: {new Date(booking.event.date).toLocaleString('en-US', {
+                Date: {new Date(booking.event.date).toLocaleString('en-GB', {
                   dateStyle: 'short',
                   timeStyle: 'short'
                 })}
@@ -58,7 +58,7 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
           <button
             key={index}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 rounded text-sm ${currentPage === index + 1 ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+            className={`px-4 py-2 rounded text-sm ${currentPage === index + 1 ? 'bg-gray-200 text-gray-800' : 'bg-gray-600 text-white'}`}
           >
             {index + 1}
           </button>

@@ -16,12 +16,9 @@ import { uploadFile } from "@/src/helpers/uploadFile"
 import ImageUploader from "@/src/helpers/ImageUploader"
 import formatDate from "../../../helpers/formatDate"
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL  
-
-
-const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, location, maxseats, description, subtitle, totalPersons,totalBookings }) => {
+const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, location, maxseats, description, subtitle, totalPersons, totalBookings }) => {
   const { handleEventDelete, setEvents, } = useCrud();
   const [editMode, setEditMode] = useState(false);
   const [address, setAddress] = useState("");
@@ -43,6 +40,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
   const [showModal, setShowModal] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     if (formDataEvent) {
@@ -52,30 +50,26 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
       })
     };
   }
-    
 
-   const handleSubmit = async (event: React.FormEvent) => {
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!formDataEvent) return;
-  
-  let pictureUrl = formDataEvent.picture;
 
-  if (file) {
-    try {
-      pictureUrl = await uploadFile(file);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      return;
+    let pictureUrl = formDataEvent.picture;
+
+    if (file) {
+      try {
+        pictureUrl = await uploadFile(file);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        return;
+      }
     }
-  }
-  const googleMapsUrl = address
-  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
-  : formDataEvent.location || "";
+    const googleMapsUrl = address
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
+      : formDataEvent.location || "";
 
-  console.log("Address Input:", address); // <-- Añadir este console.log
-      console.log("Google Maps URL:", googleMapsUrl); // Verifica la URL generada
-      console.log("Form Data Event Location:", formDataEvent.location); // Antes de la actualización
-        
     try {
       const response = await fetch(`${apiUrl}/events/${id}`,
         {
@@ -197,11 +191,9 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
         </div>
       </section>
 
-
-
       {showModal && (
         <div className="fixed inset-0 flex justify-center bg-gray-800 bg-opacity-75 items-center z-50">
-          <div className="bg-gray-800 p-4 rounded shadow-lg w-full max-w-md">
+          <div className="bg-gray-800 p-4 rounded shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="text-lg font-semibold mb-4">Registered Users</h2>
             {bookings.length > 0 ? (
               <ul>
@@ -287,7 +279,7 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
 
               <div className="mb-2">
                 <label className="block "
-                 htmlFor="date"
+                  htmlFor="date"
                 >New date:</label>
                 <input
                   type="datetime-local"
@@ -297,23 +289,23 @@ const DataRender: React.FC<IEvent> = ({ picture, title, price, date, id, locatio
                   onChange={handleChange}
                   className="w-full px-2 py-1 rounded text-black border"
                   required
-                 pattern="\d{4}-\d{2}-\d{2}"
-              />
+                  pattern="\d{4}-\d{2}-\d{2}"
+                />
               </div>
 
-              <p className="mt-2 text-white  flex items-center">Location: 
-             {formDataEvent.location ? (
-  <a href={formDataEvent.location} target="_blank" rel="noopener noreferrer">
-    <Image className="ml-2 mb-2 mt-2"
-      src={"/assets/googleMaps.png"}
-      alt="Google Maps"
-      width={30}
-      height={30}
-    />
-  </a>
-) : (
-  <span>No location available</span>
-)}
+              <p className="mt-2 text-white  flex items-center">Location:
+                {formDataEvent.location ? (
+                  <a href={formDataEvent.location} target="_blank" rel="noopener noreferrer">
+                    <Image className="ml-2 mb-2 mt-2"
+                      src={"/assets/googleMaps.png"}
+                      alt="Google Maps"
+                      width={30}
+                      height={30}
+                    />
+                  </a>
+                ) : (
+                  <span>No location available</span>
+                )}
               </p>
 
               <div className="mb-2">
