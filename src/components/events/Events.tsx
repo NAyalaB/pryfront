@@ -1,16 +1,11 @@
 "use client";
-//Types
 import { IEvent } from "@/src/types/IEvent";
-//Vendors
 import { useState } from "react";
 import Image from "next/image";
 import { loadStripe } from "@stripe/stripe-js";
-//Contexts
 import { useCrud } from "../CrudContext";
 import { useAuth } from "../AuthContext";
-//Components
 import LoadingPage from "../LoadingPage/loading";
-//BookStores
 import Swal from "sweetalert2";
 
 const stripePromise = loadStripe("pk_test_51PldYdILmxc4WwcXRDtM9FzksSogclB9IaH3r88oivd4pzPJCTQR9DRvg4JFN2b5lSbNJDIza1s75tIXpvODxzKW007koW2jl3");
@@ -178,16 +173,14 @@ const Events: React.FC = () => {
 
   return (
     <div className="p-4 my-6">
-      {/* Cuadro de aviso */}
+
       <h1 className="text-4xl font-bold text-white text-center mb-6">Experiences</h1>
     
-    {/* Cuadro de aviso */}
     <div className="bg-none border-2 border-white p-4 mb-6 mx-auto max-w-3xl text-center">
       <p className="font-bold text-white">Important!</p>
       <p className="text-white">If you have any allergies and/or dietary restrictions, don't worry, we have similar alternatives available for you.</p>
     </div>
   
-      {/* Grid de eventos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         
   
