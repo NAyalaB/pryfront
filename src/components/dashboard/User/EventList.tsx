@@ -1,6 +1,6 @@
 'use client'
 import { IBooking } from "@/src/types/IBooking";
-import { IEvent } from "@/src/types/IEvent"; 
+import { IEvent } from "@/src/types/IEvent";
 import { useEffect, useState } from "react";
 
 export interface IBookingWithEvent extends IBooking {
@@ -19,19 +19,19 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
   useEffect(() => {
     const updateEventsPerPage = () => {
       if (window.innerWidth < 650) {
-        setEventsPerPage(2); 
+        setEventsPerPage(2);
       } else if (window.innerWidth < 768) {
-        setEventsPerPage(3); 
+        setEventsPerPage(3);
       } else {
-        setEventsPerPage(4); 
+        setEventsPerPage(4);
       }
     };
 
-    updateEventsPerPage(); 
-    window.addEventListener('resize', updateEventsPerPage); 
+    updateEventsPerPage();
+    window.addEventListener('resize', updateEventsPerPage);
 
     return () => {
-      window.removeEventListener('resize', updateEventsPerPage); 
+      window.removeEventListener('resize', updateEventsPerPage);
     };
   }, []);
 
@@ -43,7 +43,6 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    console.log(`Page changed to: ${pageNumber}`);
   };
 
   const getUniqueKey = (booking: IBookingWithEvent) => {

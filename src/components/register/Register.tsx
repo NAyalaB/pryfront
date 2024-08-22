@@ -90,8 +90,6 @@ const Register: React.FC = () => {
         : "",
     };
 
-    console.log("Data to send:", dataToSend);
-
     const errors = validateFormRegister(dataUser);
     setErrorUser(errors);
 
@@ -111,7 +109,6 @@ const Register: React.FC = () => {
         console.error("Error during registration:", error);
       }
     } else {
-      console.log("Errors in the form", errors);
     }
   };
 

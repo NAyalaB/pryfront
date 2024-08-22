@@ -167,7 +167,7 @@ const Events: React.FC = () => {
     }
   };
 
-  
+
   const isSoldOut = selectedEvent ? (selectedEvent.seatsRemain ?? 0) === 0 : true;
   const isOutOfSeats = selectedEvent ? (selectedEvent.seatsRemain ?? 0) <= 0 : true;
 
@@ -175,15 +175,15 @@ const Events: React.FC = () => {
     <div className="p-4 my-6">
 
       <h1 className="text-4xl font-bold text-white text-center mb-6">Experiences</h1>
-    
-    <div className="bg-none border-2 border-white p-4 mb-6 mx-auto max-w-3xl text-center">
-      <p className="font-bold text-white">Important!</p>
-      <p className="text-white">If you have any allergies and/or dietary restrictions, don't worry, we have similar alternatives available for you.</p>
-    </div>
-  
+
+      <div className="bg-none border-2 border-white p-4 mb-6 mx-auto max-w-3xl text-center">
+        <p className="font-bold text-white">Important!</p>
+        <p className="text-white">If you have any allergies and/or dietary restrictions, don't worry, we have similar alternatives available for you.</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        
-  
+
+
         {events.length === 0 ? (
           <div className="lg:flex flex-col justify-center items-center text-2xl text-red-800 cursor-not-allowed">
             No hay eventos disponibles
@@ -226,7 +226,7 @@ const Events: React.FC = () => {
             </div>
           ))
         )}
-  
+
         {selectedEvent && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white bg-opacity-95 p-6 rounded-lg w-11/12 md:w-1/2 max-h-screen overflow-y-auto relative">
@@ -281,7 +281,7 @@ const Events: React.FC = () => {
                   <span className="font-bold text-black">Seats Remain:</span>{" "}
                   {selectedEvent.seatsRemain}
                 </p>
-  
+
                 {!isPastEvent && selectedEvent && (selectedEvent.seatsRemain ?? 0) > 0 && (
                   <div className="flex flex-col items-center mt-4">
                     <div className="flex items-center">
@@ -304,7 +304,7 @@ const Events: React.FC = () => {
                     {(selectedEvent.seatsRemain ?? 0) === 1 && (
                       <p className="text-red-500 mt-2">1 seat remain</p>
                     )}
-  
+
                     {quantity >= (selectedEvent.seatsRemain ?? 0) && (
                       <p className="text-red-500 mt-2">You have reached the maximum available seats.</p>
                     )}
@@ -314,25 +314,24 @@ const Events: React.FC = () => {
                   </div>
                 )}
                 <button
-                  className={`bg-yellow-500 text-white rounded-md px-8 py-4 mt-4 ${
-                    isSoldOut || isPastEvent ? "cursor-not-allowed opacity-50" : ""
-                  }`}
+                  className={`bg-yellow-500 text-white rounded-md px-8 py-4 mt-4 ${isSoldOut || isPastEvent ? "cursor-not-allowed opacity-50" : ""
+                    }`}
                   onClick={() => !isSoldOut && !isPastEvent && handleCheckout(selectedEvent)}
                 >
                   {isPastEvent
                     ? "Event Finished"
                     : isSoldOut
-                    ? "Sold Out"
-                    : "Add Experience"}
+                      ? "Sold Out"
+                      : "Add Experience"}
                 </button>
               </div>
             </div>
           </div>
         )}
       </div>
-    
+
     </div>
-  )};
-  
-  export default Events;
-  
+  )
+};
+
+export default Events;
