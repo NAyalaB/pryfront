@@ -5,6 +5,7 @@ import { useState } from "react";
 import { IUser } from "@/src/types/IUser";
 //Components
 import Modal from "./UserDetailsModal";
+import SearchFilter from "../../searchFilter/SearchFilter";
 
 
 interface UsersDashboardRenderProps {
@@ -16,14 +17,16 @@ const UsersDashboardRender: React.FC<UsersDashboardRenderProps> = ({ users }) =>
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [filteredUsers, setFilteredUsers] = useState<IUser[]>(users);
+
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
 
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
-  const totalPages = Math.ceil(users.length / usersPerPage);
+   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
 
   const handlePageChange = (pageNumber: number) => {
@@ -46,7 +49,10 @@ const UsersDashboardRender: React.FC<UsersDashboardRenderProps> = ({ users }) =>
   return (
     <div className="bg-gray-800 p-4 rounded shadow-md">
       <h2 className="text-xl font-semibold mb-4 text-white">Users</h2>
-      {users.length === 0 ? (
+
+      <SearchFilter users={users} onFilter={setFilteredUsers} />
+
+      {filteredUsers.length === 0 ? (
         <p className="text-white">No users available.</p>
       ) : (
         <>

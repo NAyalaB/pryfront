@@ -67,7 +67,7 @@ const Register: React.FC = () => {
         hasLowercase: /[a-z]/.test(value),
         hasUppercase: /[A-Z]/.test(value),
         hasNumber: /\d/.test(value),
-        hasSpecialChar: /[@$!%*?&.]/.test(value),
+        hasSpecialChar: /[@$!%*?&._\-]/.test(value),
         hasValidLength: value.length >= 8 && value.length <= 15,
       });
     }
