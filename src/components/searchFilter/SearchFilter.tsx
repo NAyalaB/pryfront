@@ -14,7 +14,7 @@ const SearchFilter: React.FC<SearchFilterProps> = ({ users, onFilter }) => {
 
   useEffect(() => {
     if (search === "") {
-      onFilter(users); // Muestra todos los usuarios cuando no hay texto de búsqueda
+      onFilter(users); 
     } else {
       const filtered = users.filter(user =>
         Object.values(user).some(value =>
