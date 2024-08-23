@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { ValidateLogin } from "./validateLogin";
 import { LoginFormErrors, LoginForm } from "./interfaces";
@@ -15,7 +15,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL
 
 const LoginFormClient: React.FC = () => {
   const router = useRouter();
-  const { setToken, setUser } = useAuth();
+  const { setToken, setUser, token } = useAuth();
 
   const [dataUser, setDataUser] = useState<LoginForm>({
     email: "",
@@ -28,6 +28,12 @@ const LoginFormClient: React.FC = () => {
   });
 
   const [formError, setFormError] = useState<string>("");
+
+ useEffect(() => {
+    if (token) {
+      router.push("/home"); 
+    }
+  }, [token, router]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDataUser({
@@ -55,8 +61,6 @@ const LoginFormClient: React.FC = () => {
             const decodedToken = jwtDecode<{ id: string }>(response.token);
             fetchUserById(decodedToken.id, response.token).then((user) => {
               setUser(user);
-              console.log("User ID:", user.id);
-              console.log("Is Admin:", user.admin);
               if (user.admin) {
                 router.push(`/account/admin/${user.id}/dashboard`);
               } else {
@@ -151,7 +155,7 @@ const LoginFormClient: React.FC = () => {
               onClick={() => window.location.href = `${apiUrl}/auth/auth0/login`}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >
-              Conectarse con Google
+              Connect with google
             </button>
 
           </div>

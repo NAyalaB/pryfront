@@ -1,18 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+- Gourmet Affair - 
+
+Welcome to our innovative platform for managing culinary experiences, where we transform the way you enjoy high-end gastronomy. Our platform connects talented chefs with diners seeking unique and exclusive moments in fine dining.
+
+What We Offer
+
+- Personalized Experiences: Chefs provide their services directly in their homes or selected venues, creating intimate and cozy environments for small groups of up to 8 people.
+
+- Exclusive Gastronomy: Enjoy tailor-made menus that stand out for their creativity and quality, in the comfort of a private and elegant setting.
+
+- Beyond the Restaurant: Experience fine dining outside the traditional restaurant environment. Our chefs innovate and craft personalized experiences that go beyond the ordinary meal.
+
+For Chef Entrepreneurs
+
+This platform is designed for culinary entrepreneurs looking to offer luxurious dining experiences. If you’re a chef passionate about cooking and want to take your talent to a new level, we provide the opportunity to connect with clients who value exclusivity and personalization.
+
+For Food Enthusiasts
+
+If you're seeking an unforgettable culinary experience, our platform is your gateway to unique dining moments. Book an experience and be amazed by the creativity and skill of our chefs in an exclusive and personalized setting.
+
+Join Us
+
+Whether you’re an innovative chef or a food lover looking for unique experiences, our platform offers you the chance to explore the world of gastronomy in a completely new way. Discover, book, and enjoy the finest culinary experiences today!
+
+Technologies used
+
+- NextJs.
+- Typescript.
+- Tailwind.
 
 ## Getting Started
 
-First, run the development server:
+1. Install the repository
 
-```bash
+git clone https://github.com/NAyalaB/pryfront.git
+
+2. Navigate to the Project Directory
+
+cd repository-pryfront
+
+3. Install dependencies
+
+With npm: npm install
+With yarn: yarn install
+
+4. To run the Project
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
