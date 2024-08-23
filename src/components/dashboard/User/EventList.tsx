@@ -1,6 +1,7 @@
+'use client'
 import { IBooking } from "@/src/types/IBooking";
-import { IEvent } from "@/src/types/IEvent"; // Asegúrate de importar IEvent
-import { useState } from "react";
+import { IEvent } from "@/src/types/IEvent";
+import { useEffect, useState } from "react";
 
 export interface IBookingWithEvent extends IBooking {
   event: IEvent;
@@ -13,7 +14,26 @@ interface EventListProps {
 
 const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const eventsPerPage = 4;
+  const [eventsPerPage, setEventsPerPage] = useState(4);
+
+  useEffect(() => {
+    const updateEventsPerPage = () => {
+      if (window.innerWidth < 650) {
+        setEventsPerPage(2);
+      } else if (window.innerWidth < 768) {
+        setEventsPerPage(3);
+      } else {
+        setEventsPerPage(4);
+      }
+    };
+
+    updateEventsPerPage();
+    window.addEventListener('resize', updateEventsPerPage);
+
+    return () => {
+      window.removeEventListener('resize', updateEventsPerPage);
+    };
+  }, []);
 
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
@@ -23,7 +43,6 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    console.log(`Page changed to: ${pageNumber}`);
   };
 
   const getUniqueKey = (booking: IBookingWithEvent) => {
@@ -42,7 +61,7 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
               <p className="text-gray-600 text-sm">Quantity: {booking.Quantity}</p>
               <p className="text-gray-600 text-sm">Paid: ${booking.Paid}</p>
               <p className="text-gray-600 text-sm">
-                Date: {new Date(booking.event.date).toLocaleString('en-US', {
+                Date: {new Date(booking.event.date).toLocaleString('en-GB', {
                   dateStyle: 'short',
                   timeStyle: 'short'
                 })}
@@ -58,7 +77,7 @@ const EventList: React.FC<EventListProps> = ({ bookings, title }) => {
           <button
             key={index}
             onClick={() => handlePageChange(index + 1)}
-            className={`px-4 py-2 rounded text-sm ${currentPage === index + 1 ? 'bg-gray-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+            className={`px-4 py-2 rounded text-sm ${currentPage === index + 1 ? 'bg-gray-200 text-gray-800' : 'bg-gray-600 text-white'}`}
           >
             {index + 1}
           </button>
