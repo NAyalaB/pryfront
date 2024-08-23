@@ -13,7 +13,7 @@ export function validateFormRegister (dataUser: IRegisterProps) {
 
     } else if (!dataUser.password){
         errors.password = "Password is required.";
-    }else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,15}$/.test(dataUser.password)){
+    }else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-])[A-Za-z\d@$!%*?&._\-]{8,15}$/.test(dataUser.password)){
         errors.password = "The password must be between 8 and 15 characters long, and include at least one uppercase letter, one lowercase letter, one number, and one special character.";
 
     } else if (!dataUser.name){
