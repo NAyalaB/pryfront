@@ -9,7 +9,6 @@ import { IBooking } from '@/src/types/IBooking';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL  
 
-
 interface IEventWithBookings extends IEvent {
     bookings: IBooking[];
 }
@@ -30,38 +29,36 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
 
     useEffect(() => {
         const fetchEvents = async () => {
-            setUserBookings([])
+            setUserBookings([]);
             setUserEvents([]);
             try {
-    
                 const eventsResponse = await fetch(`${apiUrl}/events/eventsWithBookingsAndUsers`);
                 const eventsData: IEventWithBookings[] = await eventsResponse.json();
-    
+
                 const bookingsResponse = await fetch(`${apiUrl}/booking/byUser/${userId}`);
                 const bookingsData: IBooking[] = await bookingsResponse.json();
-    
+
                 const bookingsWithTitles = await Promise.all(bookingsData.map(async (booking) => {
                     const eventResponse = await fetch(`${apiUrl}/events/${booking.eventsId}`);
                     const eventData = await eventResponse.json();
-    
+
                     return {
                         ...booking,
                         eventTitle: eventData.title || 'Unknown Event'
                     };
                 }));
-    
+
                 setUserEvents(eventsData);
                 setUserBookings(bookingsWithTitles);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-    
+
         if (userId) {
             fetchEvents();
         }
     }, [userId]);
-    
 
     const handleOptionChange = (option: 'Profile' | 'Events') => {
         setSelectedOption(option);
@@ -75,8 +72,8 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
         <div>
             <title>Dashboard User</title>
             <h1 className="text-gray-100 text-4xl font-bold mb-7 flex justify-center items-center p-6">{`Welcome ${user?.name}`}</h1>
-            <div className="flex flex-row mt-8 space-x-6 text-gray-100 pl-4">
-                <div className="bg-gray-800 w-1/4 h-80 p-4 rounded-lg flex flex-col">
+            <div className="flex flex-col sm:flex-row mt-8 space-x-0 sm:space-x-6 text-gray-100 pl-4">
+                <div className="bg-gray-800 w-full sm:w-1/4 h-auto p-4 rounded-lg flex flex-col mb-6 sm:mb-0">
                     <h2 className="text-2xl font-semibold mb-4">Dashboard Menu</h2>
                     <ul className="space-y-3 w-full">
                         <li>
@@ -105,7 +102,7 @@ const DashboardMenu: React.FC<DashboardProps> = ({ userId }) => {
                     )}
                     
                     {selectedOption === 'Events' && (
-                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4 mr-6 mb-4">
+                        <div className="bg-gray-800 text-gray-100 rounded-lg h-full p-4 mr-0 sm:mr-6 mb-4">
                             <EventDashboard events={userEvents} bookings={userBookings} />
                         </div>
                     )}
