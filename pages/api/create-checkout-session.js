@@ -6,7 +6,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-06-20',
 });
 
-
+const apiBack = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -46,6 +46,21 @@ export default async function handler(req, res) {
           email: email
         }
       });
+
+      setTimeout(async () => {
+        try {
+
+          const response = await fetch(`${apiBack}/booking/${userId}/${eventsId}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          const result = await response.json();
+        } catch (error) {
+        }
+      }, 60000);
+
 
       console.log('Checkout session created:', session);
 
